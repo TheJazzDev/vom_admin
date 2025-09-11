@@ -1,17 +1,32 @@
 import z from "zod";
+import {
+  bandSchema,
+  departmentSchema,
+  genderSchema,
+  maritalStatusSchema,
+  ministrySchema,
+  occupationSchema,
+} from "./shared";
 
 export const memberEditSchema = z.object({
   firstName: z.string().min(3, "First name is required"),
+  middleName: z
+    .string()
+    .min(3, "Middle Name cannot be less then 3 characters")
+    .optional(),
   lastName: z.string().min(3, "Last name is required"),
-  email: z.email("Invalid email address"),
+  email: z.email("Invalid email address").optional(),
   title: z.string().min(1, "Title is required"),
-  position: z.array(z.string()),
+  position: z.array(z.string()).optional(),
   address: z.string().min(1, "Address is required"),
-  gender: z.enum(["male", "female"]),
+  gender: genderSchema,
   dob: z.string().min(1, "Date of birth is required"),
-  department: z.array(z.string()),
-  band: z.array(z.string()).optional(),
-  ministry: z.array(z.string()).optional(),
+  occupation: occupationSchema.optional(),
+  maritalStatus: maritalStatusSchema.optional(),
+  band: bandSchema.optional(),
+  joinDate: z.string().optional(),
+  department: z.array(departmentSchema).optional(),
+  ministry: z.array(ministrySchema).optional(),
   primaryPhone: z.string().min(1, "Primary phone is required"),
   secondaryPhone: z.string().optional(),
   // Super admin only fields

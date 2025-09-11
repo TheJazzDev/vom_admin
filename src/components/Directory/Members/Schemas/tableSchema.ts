@@ -35,12 +35,13 @@ const ministrySchema = z.enum(["Children Ministry", "Youth Fellowship"]);
 export const tableSchema = z.object({
   // Core identifiers
   uid: z.string(),
-  memberId: z.string(),
+  id: z.string(),
   accountType: accountTypeSchema,
 
   // Basic information
   avatar: z.string().optional(),
   firstName: z.string(),
+  middleName: z.string().optional(),
   lastName: z.string(),
   email: z.string().email(),
   title: z.string(),
@@ -52,20 +53,19 @@ export const tableSchema = z.object({
 
   // Personal details
   gender: genderSchema,
-  dob: z.string(), // ISO date string
+  dob: z.string(),
+  occupation: z.string().optional(),
+  maritalStatus: z.string().optional(),
 
   // Church information
+  joinDate: z.string(),
   position: z.array(z.string()).optional(),
   department: z.array(departmentSchema).optional(),
   band: z.array(bandSchema).optional(),
   ministry: z.array(ministrySchema).optional(),
 
-  // Dates
-  joinDate: z.string(), // ISO date string
-  memberSince: z.string(), // ISO date string
-  createdAt: z.string(), // ISO date string
-
   // Status and verification
+  createdAt: z.string(),
   status: statusSchema,
   verified: z.boolean(),
   emailVerified: z.boolean(),

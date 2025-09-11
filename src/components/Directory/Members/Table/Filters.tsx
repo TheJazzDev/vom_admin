@@ -1,5 +1,7 @@
 import { IconChevronDown, IconLayoutColumns } from "@tabler/icons-react";
+import { Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -8,14 +10,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 
-// biome-ignore lint/suspicious/noExplicitAny: ignore
-const Filters = ({ table }: { table: any }) => {
+const TableTitleAndFilters = ({ table }: { table: any }) => {
   return (
-    <div className="flex items-center justify-between px-4 lg:px-6">
+    <div className="flex items-center justify-between">
       <Label htmlFor="view-selector" className="sr-only">
         View
       </Label>
-      <div />
+      <CardTitle className="flex items-center gap-2 text-blue-900 dark:text-blue-100">
+        <Users className="h-5 w-5" />
+        Members List
+      </CardTitle>
       <div className="flex items-center gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -30,12 +34,11 @@ const Filters = ({ table }: { table: any }) => {
             {table
               .getAllColumns()
               .filter(
-                // biome-ignore lint/suspicious/noExplicitAny: ignore
                 (column: any) =>
                   typeof column.accessorFn !== "undefined" &&
                   column.getCanHide(),
               )
-              // biome-ignore lint/suspicious/noExplicitAny: ignore
+
               .map((column: any) => {
                 return (
                   <DropdownMenuCheckboxItem
@@ -57,4 +60,4 @@ const Filters = ({ table }: { table: any }) => {
   );
 };
 
-export default Filters;
+export default TableTitleAndFilters;

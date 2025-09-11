@@ -89,6 +89,32 @@ const PersonalDetails = ({ control }: { control: Control<MemberEditForm> }) => {
             </FormItem>
           )}
         />
+        <FormField
+          control={control}
+          name="occupation"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Occupation</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="e.g Trader" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="maritalStatus"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Marital Status</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="e.g Single" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </div>
     </div>
   );

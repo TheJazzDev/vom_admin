@@ -1,5 +1,3 @@
-import { CheckIcon, CopyIcon } from "lucide-react";
-import { useState } from "react";
 import type { Control } from "react-hook-form";
 import {
   FormControl,
@@ -14,55 +12,15 @@ import { Textarea } from "@/components/ui/textarea";
 
 const BasicInformation = ({
   control,
-  memberId,
 }: {
-  memberId: string;
   control: Control<MemberEditForm>;
 }) => {
-  const [copied, setCopied] = useState<boolean>(false);
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(memberId);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy:", err);
-    }
-  };
-
   return (
     <div className="space-y-4">
       <Label className="text-base font-semibold text-blue-500">
         Basic Information
       </Label>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
-        <div>
-          <FormLabel>
-            Member Id <span className="text-red-500">*</span>
-          </FormLabel>
-          <div className="flex gap-2 items-center mt-2 relative">
-            <span className="w-full cursor-not-allowed">
-              <Input value={memberId} disabled />
-            </span>
-            <button
-              onClick={handleCopy}
-              type="button"
-              className="p-2 rounded-md transition cursor-pointer"
-            >
-              {copied ? (
-                <CheckIcon className="text-green-500 w-4 h-4" />
-              ) : (
-                <CopyIcon className="text-gray-500 w-4 h-4" />
-              )}
-            </button>
-            {copied && (
-              <p className="text-[10px] text-green-500 absolute -top-3 right-0">
-                Copied!
-              </p>
-            )}
-          </div>
-        </div>
         <FormField
           control={control}
           name="title"
@@ -86,6 +44,19 @@ const BasicInformation = ({
               <FormLabel>
                 First Name <span className="text-red-500">*</span>
               </FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="middleName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Middle Name</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>

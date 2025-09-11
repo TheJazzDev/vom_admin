@@ -43,9 +43,13 @@ import {
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import type { tableSchema } from "../Schemas/tableSchema";
 import { columns } from "./columns";
-import Filters from "./Filters";
+import TableTitleAndFilters from "./Filters";
 
-export function DataTable({ data }: { data: z.infer<typeof tableSchema>[] }) {
+export function MemberDataTable({
+  data,
+}: {
+  data: z.infer<typeof tableSchema>[];
+}) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -68,8 +72,8 @@ export function DataTable({ data }: { data: z.infer<typeof tableSchema>[] }) {
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.memberId.toString(),
-    enableRowSelection: true,
+    getRowId: (row) => row.id.toString(),
+    // enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -88,10 +92,11 @@ export function DataTable({ data }: { data: z.infer<typeof tableSchema>[] }) {
       defaultValue="outline"
       className="w-full flex-col justify-start gap-6"
     >
-      <Filters table={table} />
+      <TableTitleAndFilters table={table} />
+
       <TabsContent
         value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+        className="relative flex flex-col gap-4 overflow-auto"
       >
         <div className="overflow-hidden rounded-lg border">
           <Table>

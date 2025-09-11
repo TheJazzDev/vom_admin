@@ -1,9 +1,9 @@
-import MembersList from "./MemberList";
+import MembersPage from "@/components/Directory/Members/MemberPage";
 
 export const metadata = {
   title: "VOM - Members",
 };
 
-export default function MembersPage() {
-  return <MembersList />;
+export default function Page() {
+  return <MembersPage />;
 }

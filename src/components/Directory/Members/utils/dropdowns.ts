@@ -10,7 +10,7 @@ export const DEPARTMENTS: Department[] = [
   "Sanitation",
 ];
 
-export const BANDS: Band[] = [
+export const BANDS = [
   "Choir",
   "Love Divine",
   "Daniel",
@@ -23,17 +23,6 @@ export const BANDS: Band[] = [
   "Holy Mary",
 ];
 
-export const MINISTRIES: Ministry[] = ["Children Ministry", "Youth Fellowship"];
+export const POSITIONS = ["Secretary", "Treasurer"];
 
-export const POSITIONS = [
-  "Pastor",
-  "Elder",
-  "Deacon",
-  "Deaconess",
-  "Usher",
-  "Choir Member",
-  "Secretary",
-  "Treasurer",
-  "Coordinator",
-  "Member",
-];
+export const MINISTRIES: Ministry[] = ["Children Ministry", "Youth Fellowship"];

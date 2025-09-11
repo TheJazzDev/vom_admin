@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { HybridMultiSelectField } from "../Components/HybridMultiSelectField";
 
 const AccountControls = ({
   control,
@@ -30,6 +31,57 @@ const AccountControls = ({
       </Label>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <FormField
+          control={control}
+          name="verified"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+              <FormLabel>Verified</FormLabel>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  disabled={!isSuperAdmin}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="emailVerified"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+              <FormLabel>Email Verified</FormLabel>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  disabled={!isSuperAdmin}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="phoneVerified"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+              <FormLabel>Phone Verified</FormLabel>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  disabled={!isSuperAdmin}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <FormField
           control={control}
           name="authType"
@@ -60,7 +112,14 @@ const AccountControls = ({
               <FormLabel>Account Status</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger className="w-full" disabled={!isSuperAdmin}>
+                  <SelectTrigger
+                    className={`w-full ${
+                      !isSuperAdmin
+                        ? "bg-muted/50 border-muted cursor-not-allowed"
+                        : ""
+                    }`}
+                    disabled={!isSuperAdmin}
+                  >
                     <SelectValue />
                   </SelectTrigger>
                 </FormControl>
@@ -73,64 +132,13 @@ const AccountControls = ({
             </FormItem>
           )}
         />
-
-        <FormField
-          control={control}
-          name="verified"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-              <div className="space-y-0.5">
-                <FormLabel>Verified</FormLabel>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  disabled={!isSuperAdmin}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={control}
-          name="emailVerified"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-              <div className="space-y-0.5">
-                <FormLabel>Email Verified</FormLabel>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  disabled={!isSuperAdmin}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={control}
-          name="phoneVerified"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-              <div className="space-y-0.5">
-                <FormLabel>Phone Verified</FormLabel>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  disabled={!isSuperAdmin}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
       </div>
+      <HybridMultiSelectField
+        disabled
+        name="position"
+        control={control}
+        allowCustomInput={true}
+      />
     </div>
   );
 };

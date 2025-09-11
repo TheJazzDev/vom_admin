@@ -123,7 +123,6 @@
 
 /* Add to your global CSS or component styles */
 .drawer-content-container {
-  height: 95vh;
   display: flex;
   flex-direction: column;
 }

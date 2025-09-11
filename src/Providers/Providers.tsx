@@ -13,7 +13,6 @@ import { SiteHeader } from "@/components/sidebar/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 const mutationCache = new MutationCache({
-  // biome-ignore lint/suspicious/noExplicitAny: ignore: ignore
   onMutate: (variables: any) => {
     console.log("Global on mutate:", variables);
   },
@@ -27,7 +26,6 @@ const queryClient = new QueryClient({
       retry: false,
     },
     mutations: {
-      // biome-ignore lint/suspicious/noExplicitAny: ignore
       onSuccess: (data: any) => {
         console.log("Global mutation success", data);
       },
@@ -55,7 +53,9 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
           <AppSidebar variant="inset" />
           <SidebarInset>
             <SiteHeader />
-            <div className="flex flex-1 flex-col">{children}</div>
+            <div className="px-6 h-[calc(100vh-64px)] bg-gray-50 dark:bg-gray-900 transition-colors duration-200 overflow-hidden overflow-y-scroll">
+              <div className="max-w-7xl mx-auto">{children}</div>
+            </div>
           </SidebarInset>
           <ReactQueryDevtools />
         </SidebarProvider>

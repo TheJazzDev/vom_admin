@@ -1,9 +1,9 @@
+import DirectoryPage from "@/components/Directory/Directory";
+
 export const metadata = {
   title: "VOM - Directory",
 };
 
-const MembersPage = () => {
-  return <div>This is directory page</div>;
-};
-
-export default MembersPage;
+export default function Page() {
+  return <DirectoryPage />;
+}

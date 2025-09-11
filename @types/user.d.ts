@@ -1,37 +1,21 @@
 declare global {
   type Gender = "male" | "female";
   type AuthType = "email" | "phone";
-  type Role = "member" | "guest" | "admin" | "super_admin";
+  type AccountType = "member" | "guest";
+  type Role = "user" | "admin" | "super_admin";
+  type MaritalStatus =
+    | "single"
+    | "married"
+    | "divorced"
+    | "widowed"
+    | "separated";
 
-  type Department =
-    | "Interpretation"
-    | "Programme"
-    | "Media"
-    | "Treasury"
-    | "Technical"
-    | "Drama"
-    | "IT"
-    | "Envagicialism"
-    | "Sanitation";
-
-  type Band =
-    | "Choir"
-    | "Love Divine"
-    | "Daniel"
-    | "Deborah"
-    | "Queen Esther"
-    | "Good Women"
-    | "Warden"
-    | "John Beloved"
-    | "Faith"
-    | "Holy Mary";
-
-  type Ministry = "Children Ministry" | "Youth Fellowship";
-
-  interface CommonDetails {
+  interface UserProfile {
+    id: string;
     uid: string;
     avatar: string;
     firstName: string;
+    middleName: string;
     lastName: string;
     email: string;
     title: string;
@@ -43,29 +27,19 @@ declare global {
     verified: boolean;
     gender: Gender;
     dob: string;
+    occupation: string;
+    maritalStatus: MaritalStatus;
     department: Department[];
     band: Band[];
     ministry: Ministry[];
-    memberSince: string;
     hasPassword?: boolean;
     authType: AuthType;
     primaryPhone: string;
     secondaryPhone?: string;
     emailVerified: boolean;
     phoneVerified: boolean;
+    accountType: AccountType;
   }
-
-  interface MemberProfile extends CommonDetails {
-    accountType: "member";
-    memberId: string;
-  }
-
-  interface GuestProfile extends CommonDetails {
-    accountType: "guest";
-    guestId: string;
-  }
-
-  type UserProfile = MemberProfile | GuestProfile;
 }
 
 export {};

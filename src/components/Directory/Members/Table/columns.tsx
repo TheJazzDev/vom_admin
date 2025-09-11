@@ -4,6 +4,7 @@ import {
   IconLoader,
 } from "@tabler/icons-react";
 import type { ColumnDef } from "@tanstack/react-table";
+import { useState } from "react";
 import type { z } from "zod";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,11 +12,44 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EditMemberForm } from "../EditMember/Form";
 import type { tableSchema } from "../Schemas/tableSchema";
+
+const ActionsCell = ({ row }: { row: any }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+            size="icon"
+          >
+            <IconDotsVertical />
+            <span className="sr-only">Open menu</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-32">
+          <DropdownMenuItem onClick={() => setIsOpen(true)}>
+            Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem variant="destructive" disabled>
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <EditMemberForm
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        item={row.original}
+      />
+    </>
+  );
+};
 
 export const columns: ColumnDef<z.infer<typeof tableSchema>>[] = [
   {
@@ -30,11 +64,15 @@ export const columns: ColumnDef<z.infer<typeof tableSchema>>[] = [
     cell: ({ row }) => <p>{row.original.title}</p>,
   },
   {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => {
-      return <EditMemberForm item={row.original} />;
-    },
+    accessorKey: "firstName",
+    header: "First name",
+    cell: ({ row }) => <p>{row.original.firstName}</p>,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "lastName",
+    header: "Last name",
+    cell: ({ row }) => <p>{row.original.lastName}</p>,
     enableHiding: false,
   },
   {
@@ -68,26 +106,6 @@ export const columns: ColumnDef<z.infer<typeof tableSchema>>[] = [
   },
   {
     id: "actions",
-    cell: () => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-            size="icon"
-          >
-            <IconDotsVertical />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Make a copy</DropdownMenuItem>
-          <DropdownMenuItem>Favorite</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
+    cell: ({ row }) => <ActionsCell row={row} />,
   },
 ];

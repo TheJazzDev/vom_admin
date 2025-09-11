@@ -1,11 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { memberService } from "@/services/memberService";
+import { useRouter } from "next/navigation";
+import {
+  createMember,
+  getAllMembers,
+  getMemberById,
+  updateMember,
+} from "@/services/memberService";
 
 // Query Keys
 export const memberKeys = {
   all: ["members"] as const,
   lists: () => [...memberKeys.all, "list"] as const,
-  // biome-ignore lint/suspicious/noExplicitAny: ignore
+
   list: (filters: Record<string, any>) =>
     [...memberKeys.lists(), filters] as const,
   details: () => [...memberKeys.all, "detail"] as const,
@@ -17,28 +23,31 @@ export const memberKeys = {
 export const useMembers = () => {
   return useQuery({
     queryKey: memberKeys.lists(),
-    queryFn: memberService.getAllMembers,
+    queryFn: getAllMembers,
     staleTime: 5 * 60 * 1000,
   });
 };
 
 // Get single member
-export const useMember = (memberId: string) => {
+export const useMember = (id: string) => {
   return useQuery({
-    queryKey: memberKeys.detail(memberId),
-    queryFn: () => memberService.getMemberById(memberId),
-    enabled: !!memberId,
+    queryKey: memberKeys.detail(id),
+    queryFn: () => getMemberById(id),
+    enabled: !!id,
   });
 };
 
 // Create member mutation
 export const useCreateMember = () => {
+  const router = useRouter();
+
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: memberService.createMember,
+    mutationFn: createMember,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: memberKeys.all });
+      router.push("/directory/members");
     },
     onError: (error) => {
       console.error("Failed to create member:", error);
@@ -51,13 +60,8 @@ export const useEditMember = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      memberId,
-      data,
-    }: {
-      memberId: string;
-      data: MemberEditForm;
-    }) => memberService.updateMember(memberId, data),
+    mutationFn: ({ id, data }: { id: string; data: MemberEditForm }) =>
+      updateMember(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: memberKeys.lists() });
     },
@@ -70,7 +74,7 @@ export const useEditMember = () => {
 
 //   return useMutation({
 //     mutationFn: memberService.deleteMember,
-//     onSuccess: (_, memberId) => {
+//     onSuccess: (_, id) => {
 //       // Remove from all relevant queries
 //       queryClient.invalidateQueries({ queryKey: memberKeys.all });
 //     },

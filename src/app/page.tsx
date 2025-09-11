@@ -1,9 +1,9 @@
-import DashboardPage from "./dashboard";
+import MainDashboard from "@/components/Dashboard/Dashboard";
 
 export const metadata = {
-  title: "VOM - Home",
+  title: "VOM - Dashboard",
 };
 
 export default function Home() {
-  return <DashboardPage />;
+  return <MainDashboard />;
 }

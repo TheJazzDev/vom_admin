@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconLoader2 } from "@tabler/icons-react";
+import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
@@ -14,10 +15,11 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Form } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
+import type { BandKeys } from "@/enums";
+import type { BandRoleEnum } from "@/enums/bands";
 import { useEditMember } from "@/hooks/useMembers";
 import { memberEditSchema } from "../Schemas/memberEditSchema";
 import type { tableSchema } from "../Schemas/tableSchema";
@@ -29,15 +31,23 @@ import PersonalDetails from "./PersonalDetails";
 type MemberEditForm = z.infer<typeof memberEditSchema>;
 
 interface FormProps {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
   item: z.infer<typeof tableSchema>;
   currentUserRole?: "admin" | "super_admin";
 }
 
-export function EditMemberForm({ item, currentUserRole = "admin" }: FormProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export function EditMemberForm({
+  item,
+  isOpen,
+  setIsOpen,
+  currentUserRole = "admin",
+}: FormProps) {
+  const [copied, setCopied] = useState<boolean>(false);
 
   const initialValues: MemberEditForm = {
     firstName: item.firstName || "",
+    middleName: item.middleName || "",
     lastName: item.lastName || "",
     email: item.email || "",
     title: item.title || "",
@@ -45,8 +55,18 @@ export function EditMemberForm({ item, currentUserRole = "admin" }: FormProps) {
     address: item.address || "",
     gender: item.gender || "male",
     dob: item.dob || "",
+    occupation: item.occupation || "",
+    maritalStatus: item.maritalStatus || "",
     department: Array.isArray(item.department) ? item.department : [],
-    band: Array.isArray(item.band) ? item.band : [],
+    band: Array.isArray(item.band)
+      ? (item.band.filter(
+          (band) =>
+            band &&
+            typeof band === "object" &&
+            "name" in band &&
+            "role" in band,
+        ) as { name: BandKeys; role: BandRoleEnum }[])
+      : [],
     ministry: Array.isArray(item.ministry) ? item.ministry : [],
     primaryPhone: item.primaryPhone || "",
     secondaryPhone: item.secondaryPhone || "",
@@ -55,6 +75,7 @@ export function EditMemberForm({ item, currentUserRole = "admin" }: FormProps) {
     verified: item.verified ?? false,
     emailVerified: item.emailVerified ?? false,
     phoneVerified: item.phoneVerified ?? false,
+    joinDate: item.joinDate ?? "",
   };
 
   // Validate onChange so isValid updates live
@@ -70,7 +91,7 @@ export function EditMemberForm({ item, currentUserRole = "admin" }: FormProps) {
 
   const onSubmit = async (data: MemberEditForm) => {
     await editMemberMutation.mutateAsync(
-      { memberId: item.memberId, data },
+      { id: item.id, data },
       {
         onSuccess: () => {
           setIsOpen(false);
@@ -80,24 +101,48 @@ export function EditMemberForm({ item, currentUserRole = "admin" }: FormProps) {
     );
   };
 
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(item.id);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
   return (
     <Drawer direction="bottom" open={isOpen} onOpenChange={setIsOpen}>
-      <DrawerTrigger asChild>
-        <Button
-          variant="link"
-          className="text-foreground w-64 px-0 text-left flex items-center gap-2 cursor-pointer hover:underline"
-        >
-          <p className="flex-1">{item.firstName}</p>
-          <p className="flex-1">{item.lastName}</p>
-        </Button>
-      </DrawerTrigger>
-
       <DrawerContent className="drawer-content-container">
         <DrawerHeader className="flex-shrink-0">
           <DrawerTitle>Edit Member Profile</DrawerTitle>
-          <DrawerDescription>
-            Update {item.firstName} {item.lastName}'s profile information
-          </DrawerDescription>
+          <div className="flex gap-4 items-center mx-auto">
+            <DrawerDescription>
+              Update {item.firstName} {item.lastName}'s profile information
+            </DrawerDescription>
+            <DrawerDescription className="flex gap-2 items-center relative">
+              <span className="font-semibold">MEMBER ID:</span>
+              <span className="bg-gray-100 dark:bg-gray-600 px-2 py-1 rounded-lg">
+                <span>{item.id}</span>
+              </span>
+              <button
+                onClick={handleCopy}
+                type="button"
+                className="p-2 rounded-md transition cursor-pointer"
+              >
+                {copied ? (
+                  <CheckIcon className="text-green-500 w-4 h-4" />
+                ) : (
+                  <CopyIcon className="text-gray-500 w-4 h-4" />
+                )}
+              </button>
+              {copied && (
+                <p className="text-[10px] text-green-500 absolute -right-10">
+                  Copied!
+                </p>
+              )}
+            </DrawerDescription>
+          </div>
         </DrawerHeader>
 
         <div className="drawer-scroll-area">
@@ -107,10 +152,7 @@ export function EditMemberForm({ item, currentUserRole = "admin" }: FormProps) {
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-6"
             >
-              <BasicInformation
-                control={form.control}
-                memberId={item.memberId}
-              />
+              <BasicInformation control={form.control} />
               <Separator />
               <PersonalDetails control={form.control} />
               <Separator />
@@ -135,7 +177,7 @@ export function EditMemberForm({ item, currentUserRole = "admin" }: FormProps) {
             <Button
               form="edit-member-form"
               type="submit"
-              disabled={editMemberMutation.isPending || !isDirty || !isValid}
+              disabled={editMemberMutation.isPending || !isValid || !isDirty}
               className="w-fit flex-1"
             >
               {editMemberMutation.isPending && (
