@@ -1,21 +1,22 @@
-import { IconTrash, IconX } from "@tabler/icons-react";
-import { useState } from "react";
-import type { Control } from "react-hook-form";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { IconTrash, IconX, IconLoader2 } from '@tabler/icons-react';
+import { useState } from 'react';
+import type { Control } from 'react-hook-form';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
+import { useBands } from '@/hooks/useBands';
 
 interface SelectOfficiatingBands {
   control: Control<SundayProgrammeProps>;
@@ -29,11 +30,19 @@ export const SelectOfficiatingBands = ({
   required = false,
 }: SelectOfficiatingBands) => {
   const [selectKey, setSelectKey] = useState(0);
+  const { data, isLoading } = useBands();
+
+  const bandList = (data ?? [])
+    .filter((band) => band.id !== 'CHOIR' && band.id !== 'UNASSIGNED')
+    .map((band) => ({
+      label: band.name,
+      value: band.id,
+    }));
 
   return (
     <FormField
       control={control}
-      name="officiating.band"
+      name='officiating.band'
       render={({ field }) => {
         const currentValues: string[] = Array.isArray(field.value)
           ? (field.value as string[])
@@ -69,89 +78,126 @@ export const SelectOfficiatingBands = ({
           setSelectKey((prev) => prev + 1);
         };
 
+        const isDisabled = isLoading || disabled || data?.length === 0 || currentValues.length >= 2;
+
         return (
           <FormItem>
             <FormLabel>
-              Officiating Bands{" "}
-              {required && <span className="text-red-500">*</span>}
+              Officiating Bands{' '}
+              {required && <span className='text-red-500'>*</span>}
             </FormLabel>
             <div className="space-y-2">
-              <div
-                className={`flex flex-wrap gap-1 min-h-[32px] p-2 border rounded-md relative ${
-                  disabled ? "bg-muted/50 border-muted cursor-not-allowed" : ""
-                }`}
-              >
-                {currentValues.length > 0 ? (
-                  <>
-                    {currentValues.map((item: string, index: number) => (
-                      <Badge
-                        key={index + 1}
-                        variant="secondary"
-                        className={`text-xs ${disabled ? "opacity-50" : ""}`}
-                      >
-                        {item}
-                        <button
-                          type="button"
-                          disabled={disabled}
-                          onClick={() => handleRemoveItem(index)}
-                          className={disabled ? "cursor-not-allowed" : ""}
-                        >
-                          <IconX
-                            className={`ml-1 h-3 w-3 ${
-                              disabled
-                                ? "text-muted-foreground cursor-not-allowed"
-                                : "cursor-pointer hover:text-red-500"
-                            }`}
-                          />
-                        </button>
-                      </Badge>
-                    ))}
-                    <Button
-                      size="sm"
-                      type="button"
-                      variant="ghost"
-                      disabled={disabled}
-                      onClick={handleClearAll}
-                      className={`h-6 px-2 text-xs absolute top-1 right-1 ${
-                        disabled
-                          ? "text-muted-foreground cursor-not-allowed opacity-50"
-                          : "text-muted-foreground hover:text-red-500"
-                      }`}
-                    >
-                      <IconTrash className="h-3 w-3" />
-                    </Button>
-                  </>
-                ) : (
-                  <span
-                    className={`text-sm ${
-                      disabled
-                        ? "text-muted-foreground/50"
-                        : "text-muted-foreground"
-                    }`}
-                  >
-                    No band selected
-                  </span>
+              {/* Display area for selected bands */}
+              <div className={`flex items-center justify-between w-full border rounded-md px-3 py-2 min-h-[40px] ${
+                isDisabled && !isLoading
+                  ? 'bg-muted/50 border-muted cursor-not-allowed text-muted-foreground'
+                  : 'bg-background'
+              }`}>
+                <div className="flex-1 flex items-center gap-2 flex-wrap">
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <IconLoader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-sm text-muted-foreground">
+                        Loading bands...
+                      </span>
+                    </div>
+                  ) : currentValues.length > 0 ? (
+                    <>
+                      {currentValues.map((val, index) => {
+                        const band = bandList.find((b) => b.value === val);
+                        return (
+                          <Badge
+                            key={val}
+                            variant='secondary'
+                            className={`text-xs h-6 ${
+                              isDisabled ? 'opacity-50' : ''
+                            }`}>
+                            {band ? band.label : val}
+                            <button
+                              type='button'
+                              disabled={isLoading || disabled}
+                              onClick={() => handleRemoveItem(index)}
+                              className={`ml-1 ${
+                                isLoading || disabled ? 'cursor-not-allowed' : ''
+                              }`}>
+                              <IconX
+                                className={`h-3 w-3 ${
+                                  isLoading || disabled
+                                    ? 'text-muted-foreground cursor-not-allowed'
+                                    : 'cursor-pointer hover:text-red-500'
+                                }`}
+                              />
+                            </button>
+                          </Badge>
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <span className="text-sm text-muted-foreground">
+                      {currentValues.length >= 2
+                        ? "Maximum 2 bands selected"
+                        : "Select officiating bands"
+                      }
+                    </span>
+                  )}
+                </div>
+
+                {currentValues.length > 0 && !isLoading && (
+                  <Button
+                    size='sm'
+                    type='button'
+                    variant='ghost'
+                    disabled={isLoading || disabled}
+                    onClick={handleClearAll}
+                    className={`h-6 px-2 text-xs ml-2 shrink-0 ${
+                      isLoading || disabled
+                        ? 'text-muted-foreground cursor-not-allowed opacity-50'
+                        : 'text-muted-foreground hover:text-red-500'
+                    }`}>
+                    <IconTrash className='h-3 w-3' />
+                  </Button>
                 )}
               </div>
 
-              <div>
-                {[""].length > 0 && (
-                  <Select key={selectKey} onValueChange={handleAddItem}>
-                    <SelectTrigger disabled={disabled} className="w-full">
-                      <SelectValue placeholder="Select officiating bands" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[]
-                        .filter((option) => !currentValues.includes(option))
-                        .map((option) => (
-                          <SelectItem key={option} value={option}>
-                            {option}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              </div>
+              {/* Select dropdown for adding bands */}
+              <Select key={selectKey} onValueChange={handleAddItem}>
+                <SelectTrigger
+                  disabled={isDisabled}
+                  className='w-full cursor-pointer'>
+                  <SelectValue placeholder={
+                    currentValues.length >= 2
+                      ? "Maximum 2 bands allowed"
+                      : "Add band"
+                  } />
+                </SelectTrigger>
+                <SelectContent>
+                  {isLoading ? (
+                    <div className="flex items-center justify-center py-4">
+                      <IconLoader2 className="h-4 w-4 animate-spin mr-2" />
+                      <span className="text-sm">Loading bands...</span>
+                    </div>
+                  ) : currentValues.length >= 2 ? (
+                    <div className="py-4 text-center text-sm text-muted-foreground">
+                      Maximum of 2 bands can be selected
+                    </div>
+                  ) : bandList.filter((option) => !currentValues.includes(option.value)).length === 0 ? (
+                    <div className="py-4 text-center text-sm text-muted-foreground">
+                      {currentValues.length === bandList.length
+                        ? "All bands selected"
+                        : "No bands available"
+                      }
+                    </div>
+                  ) : (
+                    bandList
+                      .filter((option) => !currentValues.includes(option.value))
+                      .map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))
+                  )}
+                </SelectContent>
+              </Select>
             </div>
             <FormMessage />
           </FormItem>

@@ -1,42 +1,30 @@
-import type { Control } from "react-hook-form";
+import type { Control } from 'react-hook-form';
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { ArrayInput } from '../../Components/ArrayTextArea';
 
 const Hynms = ({ control }: { control: Control<SundayProgrammeProps> }) => {
   return (
-    <div className="space-y-4">
-      <h3 className="font-semibold text-lg">Hymns</h3>
+    <div className='space-y-4 mb-12'>
+      <h3 className='font-semibold text-2xl text-center text-blue-600'>Hymns</h3>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
         <FormField
           control={control}
-          name="hymns.processional"
+          name='hymns.processional'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Processional</FormLabel>
+              <FormLabel>
+                Processional <span className='text-red-500'>*</span>
+              </FormLabel>
               <FormControl>
-                <Input placeholder="Processional hymn" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={control}
-          name="hymns.introit"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Introit</FormLabel>
-              <FormControl>
-                <Input placeholder="Introit hymn" {...field} />
+                <Input placeholder='Processional hymn' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -45,12 +33,14 @@ const Hynms = ({ control }: { control: Control<SundayProgrammeProps> }) => {
 
         <FormField
           control={control}
-          name="hymns.opening"
+          name='hymns.introit'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Opening Hymn</FormLabel>
+              <FormLabel>
+                Introit <span className='text-red-500'>*</span>
+              </FormLabel>
               <FormControl>
-                <Input placeholder="Opening hymn" {...field} />
+                <Input placeholder='Introit hymn' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -59,12 +49,14 @@ const Hynms = ({ control }: { control: Control<SundayProgrammeProps> }) => {
 
         <FormField
           control={control}
-          name="hymns.sermon"
+          name='hymns.opening'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Sermon Hymn</FormLabel>
+              <FormLabel>
+                Opening Hymn <span className='text-red-500'>*</span>
+              </FormLabel>
               <FormControl>
-                <Input placeholder="Sermon hymn" {...field} />
+                <Input placeholder='Opening hymn' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -73,12 +65,14 @@ const Hynms = ({ control }: { control: Control<SundayProgrammeProps> }) => {
 
         <FormField
           control={control}
-          name="hymns.vesper"
+          name='hymns.sermon'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Vesper Hymn</FormLabel>
+              <FormLabel>
+                Sermon Hymn <span className='text-red-500'>*</span>
+              </FormLabel>
               <FormControl>
-                <Input placeholder="Vesper hymn" {...field} />
+                <Input placeholder='Sermon hymn' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -87,34 +81,57 @@ const Hynms = ({ control }: { control: Control<SundayProgrammeProps> }) => {
 
         <FormField
           control={control}
-          name="hymns.recessional"
+          name='hymns.vesper'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Recessional Hymn</FormLabel>
+              <FormLabel>
+                Vesper Hymn <span className='text-red-500'>*</span>
+              </FormLabel>
               <FormControl>
-                <Input placeholder="Recessional hymn" {...field} />
+                <Input placeholder='Vesper hymn' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={control}
-          name="hymns.thanksgiving"
+          name='hymns.recessional'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Thanksgiving Hymns</FormLabel>
+              <FormLabel>
+                Recessional Hymn <span className='text-red-500'>*</span>
+              </FormLabel>
               <FormControl>
-                <Textarea
-                  rows={2}
-                  placeholder="Enter thanksgiving hymns (comma-separated or list)"
-                  {...field}
-                />
+                <Input placeholder='Recessional hymn' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+        <div className='col-span-2 gap-6'>
+          <FormField
+            control={control}
+            name='hymns.thanksgiving'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className='w-full'>
+                  Thanksgiving Hymns <span className='text-red-500'>*</span>
+                </FormLabel>
+                <FormControl>
+                  <ArrayInput
+                    placeholder='Enter hymn title (e.g., Hymn 123: Great is Thy Faithfulness)'
+                    value={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
       </div>
     </div>
   );

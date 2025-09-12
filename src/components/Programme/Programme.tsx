@@ -271,7 +271,7 @@ const ProgrammePage = () => {
       <Tabs
         value={activeTab}
         onValueChange={(value) => setActiveTab(value as ServiceSections)}>
-        <TabsList className='grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-800'>
+        <TabsList className='grid w-full grid-cols-4 bg-gray-100 dark:bg-gray-800'>
           <TabsTrigger
             value='Current'
             className='data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700'>
@@ -339,6 +339,34 @@ const ProgrammePage = () => {
         </TabsContent>
 
         <TabsContent value='Past' className='mt-6'>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+            {filteredProgrammes.length > 0 ? (
+              filteredProgrammes.map((programme) => (
+                <ProgrammeCard key={programme.id} programme={programme} />
+              ))
+            ) : (
+              <div className='col-span-full'>
+                <Card className='bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700'>
+                  <CardContent className='p-6'>
+                    <div className='text-center py-12'>
+                      <BookOpen className='h-12 w-12 text-gray-400 mx-auto mb-4' />
+                      <h3 className='text-lg font-medium text-gray-900 dark:text-gray-100 mb-2'>
+                        No Past Programmes
+                      </h3>
+                      <p className='text-gray-600 dark:text-gray-400'>
+                        {searchTerm || typeFilter !== 'all'
+                          ? 'No programmes match your search criteria.'
+                          : 'No programmes have been completed yet.'}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value='Draft' className='mt-6'>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
             {filteredProgrammes.length > 0 ? (
               filteredProgrammes.map((programme) => (

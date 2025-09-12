@@ -1,8 +1,8 @@
-import z from "zod";
+import z from 'zod';
 
 export const shilohProgrammeSchema = z.object({
-  type: z.literal("shilo"),
-  date: z.string().nonempty("Date is required"),
+  type: z.literal('shilo'),
+   date: z.date({ error: 'Date is required' }).transform((d) => d.toISOString()),
   theme: z.string(),
   topic: z.string(),
   lesson: z.string(),

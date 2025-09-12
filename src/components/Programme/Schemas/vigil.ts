@@ -1,8 +1,8 @@
-import z from "zod";
+import z from 'zod';
 
 export const vigilProgrammeSchema = z.object({
-  type: z.literal("vigil"),
-  date: z.string().nonempty("Date is required"),
+  type: z.literal('vigil'),
+  date: z.date({ error: 'Date is required' }).transform((d) => d.toISOString()),
   theme: z.string().optional(),
   topic: z.string().optional(),
   lesson: z.string().optional(),

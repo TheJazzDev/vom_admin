@@ -1,5 +1,5 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const draftProgrammeSchema = z.object({
-  date: z.string().min(1, "Date is required"),
+  date: z.date({ error: 'Date is required' }).transform((d) => d.toISOString()),
 });
