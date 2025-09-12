@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { DataTable } from "@/components/Directory/Members/Table/MemberTable";
+import { MemberDataTable } from "@/components/Directory/Members/Table/MemberTable";
 import { useMembers } from "@/hooks/useMembers";
 
 const MembersList = () => {
@@ -20,7 +20,7 @@ const MembersList = () => {
 
   return (
     <div className="p-6">
-      <DataTable data={members || []} />
+      <MemberDataTable data={members || []} />
     </div>
   );
 };
