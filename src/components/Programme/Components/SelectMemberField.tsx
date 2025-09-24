@@ -1,20 +1,20 @@
+import { type Control, useWatch } from "react-hook-form";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useWatch, type Control } from 'react-hook-form';
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { useMembersByBands } from '@/hooks/useBands';
-import { BandKeys } from '@/enums';
-import { convertBandsToOptions } from '../Utils/convertBandsToOptions';
+} from "@/components/ui/select";
+import { useBandsWithMembers } from "@/hooks/useBands";
+import { officiatingFields } from "../constants/officiatingFields";
+import { convertBandsToOptions } from "../Utils/convertBandsToOptions";
 
 export const SelectMemberField = ({
   control,
@@ -27,15 +27,17 @@ export const SelectMemberField = ({
 }) => {
   const officiatingBands = useWatch({
     control,
-    name: 'officiating.band',
+    name: "officiating.band",
   });
 
   const allOfficiatingMembers = useWatch({
     control,
-    name: 'officiating',
+    name: "officiating",
   });
 
-  const { data, isLoading } = useMembersByBands(officiatingBands as BandKeys[]);
+  const { data, isLoading } = useBandsWithMembers(
+    officiatingBands as BandKeys[],
+  );
 
   const membersList = convertBandsToOptions(data ?? []);
 
@@ -45,19 +47,11 @@ export const SelectMemberField = ({
     if (!allOfficiatingMembers) return [];
 
     const selectedMembers: string[] = [];
-    const officiatingFields = [
-      'lesson',
-      'worshipLeader',
-      'alternateWorshipLeader',
-      'intercessoryPrayer1',
-      'intercessoryPrayer2',
-      'intercessoryPrayer3',
-    ];
 
     officiatingFields.forEach((fieldName) => {
       const fieldValue = allOfficiatingMembers[fieldName];
 
-      if (fieldName !== currentFieldName.split('.').pop() && fieldValue) {
+      if (fieldName !== currentFieldName.split(".").pop() && fieldValue) {
         selectedMembers.push(fieldValue);
       }
     });
@@ -73,8 +67,8 @@ export const SelectMemberField = ({
         const currentFieldName = name;
         const selectedMembers = getSelectedMembers(currentFieldName);
 
-        const availableOptions = membersList.filter(
-          (option) => !selectedMembers.includes(option.value)
+        const _availableOptions = membersList.filter(
+          (option) => !selectedMembers.includes(option.value),
         );
 
         return (
@@ -82,33 +76,40 @@ export const SelectMemberField = ({
             <FormLabel
               className={`${
                 disabled
-                  ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                  : ''
-              }`}>
-              {label} <span className='text-red-500'>*</span>
+                  ? "text-gray-400 dark:text-gray-500 cursor-not-allowed"
+                  : ""
+              }`}
+            >
+              {label} <span className="text-red-500">*</span>
             </FormLabel>
-            <Select
-              disabled={disabled}
-              value={field.value || ''}
-              onValueChange={(val) =>
-                field.onChange(val === '__CLEAR__' ? '' : val)
-              }>
-              <SelectTrigger className='w-full'>
-                <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
-              </SelectTrigger>
-              <SelectContent>
-                {field.value && (
-                  <SelectItem value='__CLEAR__'>
-                    <span className='text-gray-500'>Clear selection</span>
-                  </SelectItem>
-                )}
-                {membersList.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="relative">
+              <Select
+                disabled={disabled}
+                value={field.value || ""}
+                onValueChange={(val) =>
+                  field.onChange(val === "__CLEAR__" ? "" : val)
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
+                </SelectTrigger>
+                <SelectContent>
+                  {field.value && (
+                    <SelectItem value="__CLEAR__">
+                      <span className="text-gray-500">Clear selection</span>
+                    </SelectItem>
+                  )}
+                  {_availableOptions.map((option, index) => (
+                    <SelectItem
+                      key={`${option.value}+${index}`}
+                      value={option.value}
+                    >
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <FormMessage />
           </FormItem>
         );

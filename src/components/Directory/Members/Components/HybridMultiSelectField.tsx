@@ -1,28 +1,28 @@
-import { IconTrash, IconX } from '@tabler/icons-react';
-import { type KeyboardEvent, useState } from 'react';
-import type { Control } from 'react-hook-form';
-import type z from 'zod';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { IconTrash, IconX } from "@tabler/icons-react";
+import { type KeyboardEvent, useState } from "react";
+import type { Control } from "react-hook-form";
+import type z from "zod";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import type { memberEditSchema } from '../Schemas/memberEditSchema';
-import { DEPARTMENTS, MINISTRIES, POSITIONS } from '../utils/dropdowns';
+} from "@/components/ui/select";
+import type { memberEditSchema } from "../Schemas/memberEditSchema";
+import { DEPARTMENTS, MINISTRIES, POSITIONS } from "../utils/dropdowns";
 
 type MemberEditForm = z.infer<typeof memberEditSchema>;
-type AllowedKeys = 'department' | 'ministry' | 'position';
+type AllowedKeys = "department" | "ministry" | "position";
 
 interface HybridMultiSelectFieldProps {
   name: AllowedKeys;
@@ -40,7 +40,7 @@ export const HybridMultiSelectField = ({
   allowCustomInput = false,
 }: HybridMultiSelectFieldProps) => {
   const [selectKey, setSelectKey] = useState(0);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
 
   const getFieldConfig: Record<
     AllowedKeys,
@@ -52,18 +52,18 @@ export const HybridMultiSelectField = ({
   > = {
     department: {
       options: DEPARTMENTS,
-      inputPlaceholder: 'Type custom department',
-      selectPlaceholder: 'Or select preset department',
+      inputPlaceholder: "Type custom department",
+      selectPlaceholder: "Or select preset department",
     },
     ministry: {
       options: MINISTRIES,
-      inputPlaceholder: 'Type custom ministry',
-      selectPlaceholder: 'Or select preset ministry',
+      inputPlaceholder: "Type custom ministry",
+      selectPlaceholder: "Or select preset ministry",
     },
     position: {
       options: POSITIONS,
-      inputPlaceholder: 'Type custom position',
-      selectPlaceholder: 'Or select preset position',
+      inputPlaceholder: "Type custom position",
+      selectPlaceholder: "Or select preset position",
     },
   };
 
@@ -112,7 +112,7 @@ export const HybridMultiSelectField = ({
         };
 
         const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
-          if (e.key === 'Enter') {
+          if (e.key === "Enter") {
             e.preventDefault();
             const trimmedValue = inputValue.trim();
             if (trimmedValue && !currentValues.includes(trimmedValue)) {
@@ -124,74 +124,79 @@ export const HybridMultiSelectField = ({
                 field.onBlur();
               }, 0);
 
-              setInputValue('');
+              setInputValue("");
             }
           }
         };
 
         return (
           <FormItem>
-            <FormLabel className='capitalize'>
-              {name} {required && <span className='text-red-500'>*</span>}
+            <FormLabel className="capitalize">
+              {name} {required && <span className="text-red-500">*</span>}
             </FormLabel>
-            <div className='space-y-2'>
+            <div className="space-y-2">
               <div
                 className={`flex flex-wrap gap-1 min-h-[32px] p-2 border rounded-md relative ${
-                  disabled ? 'bg-muted/50 border-muted cursor-not-allowed' : ''
-                }`}>
+                  disabled ? "bg-muted/50 border-muted cursor-not-allowed" : ""
+                }`}
+              >
                 {currentValues.length > 0 ? (
                   <>
                     {currentValues.map((item: string, index: number) => (
                       <Badge
                         key={index}
-                        variant='secondary'
-                        className={`text-xs ${disabled ? 'opacity-50' : ''}`}>
+                        variant="secondary"
+                        className={`text-xs ${disabled ? "opacity-50" : ""}`}
+                      >
                         {item}
                         <button
-                          type='button'
+                          type="button"
                           disabled={disabled}
                           onClick={() => handleRemoveItem(index)}
-                          className={disabled ? 'cursor-not-allowed' : ''}>
+                          className={disabled ? "cursor-not-allowed" : ""}
+                        >
                           <IconX
                             className={`ml-1 h-3 w-3 ${
                               disabled
-                                ? 'text-muted-foreground cursor-not-allowed'
-                                : 'cursor-pointer hover:text-red-500'
+                                ? "text-muted-foreground cursor-not-allowed"
+                                : "cursor-pointer hover:text-red-500"
                             }`}
                           />
                         </button>
                       </Badge>
                     ))}
                     <Button
-                      size='sm'
-                      type='button'
-                      variant='ghost'
+                      size="sm"
+                      type="button"
+                      variant="ghost"
                       disabled={disabled}
                       onClick={handleClearAll}
                       className={`h-6 px-2 text-xs absolute top-1 right-1 ${
                         disabled
-                          ? 'text-muted-foreground cursor-not-allowed opacity-50'
-                          : 'text-muted-foreground hover:text-red-500'
-                      }`}>
-                      <IconTrash className='h-3 w-3' />
+                          ? "text-muted-foreground cursor-not-allowed opacity-50"
+                          : "text-muted-foreground hover:text-red-500"
+                      }`}
+                    >
+                      <IconTrash className="h-3 w-3" />
                     </Button>
                   </>
                 ) : (
                   <span
                     className={`text-sm ${
                       disabled
-                        ? 'text-muted-foreground/50'
-                        : 'text-muted-foreground'
-                    }`}>
+                        ? "text-muted-foreground/50"
+                        : "text-muted-foreground"
+                    }`}
+                  >
                     No {name} selected
                   </span>
                 )}
               </div>
 
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {fieldConfig.options.length > 0 && (
                   <Select key={selectKey} onValueChange={handleAddItem}>
-                    <SelectTrigger disabled={disabled} className='w-full'>
+                    <SelectTrigger disabled={disabled} className="w-full">
                       <SelectValue
                         placeholder={fieldConfig.selectPlaceholder}
                       />
@@ -211,7 +216,7 @@ export const HybridMultiSelectField = ({
                 {allowCustomInput && (
                   <Input
                     value={inputValue}
-                    className='col-span-1'
+                    className="col-span-1"
                     disabled={disabled}
                     onKeyDown={handleKeyPress}
                     placeholder={fieldConfig.inputPlaceholder}

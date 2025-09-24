@@ -5,6 +5,17 @@ import { vigilProgrammeSchema } from "@/components/Programme/Schemas/vigil";
 declare global {
   type ProgrammeType = "shilo" | "sunday" | "vigil";
   type ServiceSections = "Current" | "Upcoming" | "Past";
+  type DayType =
+    | "sunday"
+    | "monday"
+    | "tuesday"
+    | "wednesday"
+    | "thursday"
+    | "friday"
+    | "saturday"
+    | "weekday"
+    | "weekend"
+    | "any";
 
   export interface UpcomingProgramme {
     id: string;

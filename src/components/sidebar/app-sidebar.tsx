@@ -39,25 +39,29 @@ const data = {
   // ],
   navMain: [
     {
-      title: "Programme",
-      url: "#",
+      title: "Programmes",
+      url: "/programmes",
       icon: BookOpen,
       items: [
         {
           title: "Overview",
-          url: "/programme",
+          url: "/programmes",
         },
         {
           title: "Create new",
-          url: "/programme/new",
+          url: "/programmes/create",
         },
         {
           title: "Upcoming",
-          url: "/programme/upcoming",
+          url: "/programmes/upcoming",
         },
         {
           title: "Past",
-          url: "/programme/past",
+          url: "/programmes/past",
+        },
+        {
+          title: "Drafts",
+          url: "/programmes/drafts",
         },
       ],
     },

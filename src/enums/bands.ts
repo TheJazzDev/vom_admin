@@ -1,15 +1,15 @@
-import type { IconType } from "react-icons/lib";
+// import type { IconType } from "react-icons/lib";
 
-export enum BandRoleEnum {
-  CAPTAIN = "Captain",
-  VICE_CAPTAIN = "Vice Captain",
-  SECRETARY = "Secretary",
-  MEMBER = "Member",
-  CHOIR_MASTER = "Choir Master",
-  ASSISTANT_CHOIR_MASTER = "Assistant Choir Master",
-}
+// export enum BandRoleEnum {
+//   CAPTAIN = "Captain",
+//   VICE_CAPTAIN = "Vice Captain",
+//   SECRETARY = "Secretary",
+//   MEMBER = "Member",
+//   CHOIR_MASTER = "Choir Master",
+//   ASSISTANT_CHOIR_MASTER = "Assistant Choir Master",
+// }
 
-export enum BandKeys {
+export enum BandKeysEnum {
   CHOIR = "CHOIR",
   LOVE_DIVINE = "LOVE_DIVINE",
   DANIEL = "DANIEL",
@@ -23,26 +23,26 @@ export enum BandKeys {
   UNASSIGNED = "UNASSIGNED",
 }
 
-export const BandDisplayNames: Record<BandKeys, string> = {
-  [BandKeys.CHOIR]: "Choir",
-  [BandKeys.LOVE_DIVINE]: "Love Divine",
-  [BandKeys.DANIEL]: "Daniel",
-  [BandKeys.DEBORAH]: "Deborah",
-  [BandKeys.QUEEN_ESTHER]: "Queen Esther",
-  [BandKeys.GOOD_WOMEN]: "Good Women",
-  [BandKeys.WARDEN]: "Warden",
-  [BandKeys.JOHN_BELOVED]: "John Beloved",
-  [BandKeys.FAITH]: "Faith",
-  [BandKeys.HOLY_MARY]: "Holy Mary",
-  [BandKeys.UNASSIGNED]: "Unassigned",
-};
+// export const BandDisplayNames: Record<BandKeys, string> = {
+//   [BandKeys.CHOIR]: "Choir",
+//   [BandKeys.LOVE_DIVINE]: "Love Divine",
+//   [BandKeys.DANIEL]: "Daniel",
+//   [BandKeys.DEBORAH]: "Deborah",
+//   [BandKeys.QUEEN_ESTHER]: "Queen Esther",
+//   [BandKeys.GOOD_WOMEN]: "Good Women",
+//   [BandKeys.WARDEN]: "Warden",
+//   [BandKeys.JOHN_BELOVED]: "John Beloved",
+//   [BandKeys.FAITH]: "Faith",
+//   [BandKeys.HOLY_MARY]: "Holy Mary",
+//   [BandKeys.UNASSIGNED]: "Unassigned",
+// };
 
-export interface BandConfigEntry {
-  id: BandKeys;
-  name: string;
-  icon: IconType;
-  description: string;
-  gradient: string[];
-}
+// export interface BandConfigEntry {
+//   id: BandKeys;
+//   name: string;
+//   icon: IconType;
+//   description: string;
+//   gradient: string[];
+// }
 
-export type BandConfigRecord = Record<BandKeys, BandConfigEntry>;
+// export type BandConfigRecord = Record<BandKeys, BandConfigEntry>;

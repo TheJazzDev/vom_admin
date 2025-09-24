@@ -2,6 +2,17 @@
 
 import { Download, UserPlus } from "lucide-react";
 import { useParams } from "next/navigation";
+import {
+  IoHeartOutline,
+  IoHelpCircleOutline,
+  IoMusicalNoteOutline,
+  IoPersonAddOutline,
+  IoShieldHalfOutline,
+  IoShieldOutline,
+  IoSparklesOutline,
+  IoStarOutline,
+  IoWomanOutline,
+} from "react-icons/io5";
 import { Atom } from "react-loading-indicators";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,14 +23,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { BandKeys } from "@/enums";
-import { useMembersByBand } from "@/hooks/useBands";
+import { BandKeysEnum } from "@/enums";
+import { useBandWithMembers } from "@/hooks/useBands";
 
 const getBandKeyFromParam = (
   param: string | undefined,
 ): BandKeys | undefined => {
   if (!param) return undefined;
-  return Object.values(BandKeys).find(
+  return Object.values(BandKeysEnum).find(
     (bandKey) => bandKey.toLowerCase() === param.toLowerCase(),
   );
 };
@@ -28,18 +39,32 @@ const BandDetailsPage = () => {
   const params = useParams();
   const bandKey = getBandKeyFromParam(params.band as string);
 
-  const { data, isLoading } = useMembersByBand(bandKey as BandKeys);
-  const bandData = data || {
-    members: [],
-    meta: {
-      name: params.band,
-      description: `Loading ${params.band} data...`,
-      gradient: ["#000", "#111"],
-      icon: () => null,
-    },
-  };
+  const { data: bandData, isLoading } = useBandWithMembers(bandKey as BandKeys);
 
-  const Icon = bandData.meta.icon;
+  const getIcon = () => {
+    switch (bandData?.icon2) {
+      case "IoMusicalNoteOutline":
+        return <IoMusicalNoteOutline />;
+      case "IoHeartOutline":
+        return <IoHeartOutline />;
+      case "IoShieldOutline":
+        return <IoShieldOutline />;
+      case "IoSparklesOutline":
+        return <IoSparklesOutline />;
+      case "IoWomanOutline":
+        return <IoWomanOutline />;
+      case "IoShieldHalfOutline":
+        return <IoShieldHalfOutline />;
+      case "IoHelpCircleOutline":
+        return <IoHelpCircleOutline />;
+      case "IoStarOutline":
+        return <IoStarOutline />;
+      case "IoPersonAddOutline":
+        return <IoPersonAddOutline />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
@@ -50,17 +75,17 @@ const BandDetailsPage = () => {
             <div
               className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-2xl"
               style={{
-                background: `linear-gradient(135deg, ${bandData.meta.gradient[0]}, ${bandData.meta.gradient[1]})`,
+                background: `linear-gradient(135deg, ${bandData?.gradient[0]}, ${bandData?.gradient[1]})`,
               }}
             >
-              <Icon />
+              {getIcon()}
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 capitalize">
-                {bandData.meta.name}
+                {bandData?.name}
               </h1>
               <p className="text-gray-600 dark:text-gray-400 mt-1">
-                {bandData.meta.description}
+                {bandData?.description}
               </p>
             </div>
           </div>
@@ -83,7 +108,7 @@ const BandDetailsPage = () => {
         <div>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              Band Members ({bandData.members.length})
+              Band Members ({bandData?.memberCount || 0})
             </h2>
           </div>
 
@@ -111,7 +136,7 @@ const BandDetailsPage = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {bandData.members.map((member) => (
+                  {bandData?.members.map((member) => (
                     <TableRow key={member.id}>
                       <TableCell>{member.title}</TableCell>
                       <TableCell>{member.firstName}</TableCell>

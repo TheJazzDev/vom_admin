@@ -1,48 +1,41 @@
 import { useQuery } from "@tanstack/react-query";
-import type { BandKeys } from "@/enums";
 import {
-  getAllBandsWithMembers,
-  getMembersByBand,
-  getMembersByBands,
-} from "@/services/bandService";
+  getAllBands,
+  getBandsWithMembers,
+  getBandWithMembers,
+} from "@/services/bands/bandService";
 
 export const bandsKeys = {
   all: ["bands"] as const,
   lists: () => [...bandsKeys.all, "list"] as const,
-
-  list: (filters: Record<string, any>) =>
-    [...bandsKeys.lists(), filters] as const,
-  details: () => [...bandsKeys.all, "detail"] as const,
-  detail: (id: string) => [...bandsKeys.details(), id] as const,
   search: (term: string) => [...bandsKeys.all, "search", term] as const,
-  membersByBand: (id: string) => [...bandsKeys.all, "members", id] as const,
-  membersByBands: (ids: string[]) =>
+  bandWithMembers: (id: string) => [...bandsKeys.all, "members", id] as const,
+  bandsWithMembers: (ids: BandKeys[]) =>
     [...bandsKeys.all, "members", ...ids] as const,
 };
 
-export const useBands = () => {
+export const useAllBands = () => {
   return useQuery({
     queryKey: bandsKeys.lists(),
-    queryFn: getAllBandsWithMembers,
+    queryFn: getAllBands,
     staleTime: 5 * 60 * 1000,
   });
 };
 
-export const useMembersByBand = (id: BandKeys) => {
+export const useBandWithMembers = (key: BandKeys) => {
   return useQuery({
-    queryKey: bandsKeys.membersByBand(id.toLowerCase()),
-    queryFn: () => getMembersByBand(id),
+    queryKey: bandsKeys.bandWithMembers(key),
+    queryFn: () => getBandWithMembers(key),
     staleTime: 5 * 60 * 1000,
-    enabled: !!id,
+    enabled: !!key,
   });
 };
 
-export const useMembersByBands = (keys: BandKeys[]) => {
-  const lowercaseKeys = keys.map((k) => k.toLowerCase());
+export const useBandsWithMembers = (bandIds: BandKeys[]) => {
   return useQuery({
-    queryKey: bandsKeys.membersByBands(lowercaseKeys),
-    queryFn: () => getMembersByBands(keys),
+    queryKey: bandsKeys.bandsWithMembers(bandIds),
+    queryFn: () => getBandsWithMembers(bandIds),
+    enabled: bandIds.length > 0,
     staleTime: 5 * 60 * 1000,
-    enabled: keys.length > 0,
   });
 };

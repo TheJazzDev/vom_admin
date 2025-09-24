@@ -2,8 +2,6 @@ import { createMemberSchema } from "@/components/Directory/Members/Schemas/creat
 import { memberEditSchema } from "@/components/Directory/Members/Schemas/memberEditSchema";
 
 declare global {
-  type DepartmentRole = "Head" | "Deputy" | "Member";
-
   type Department =
     | "Interpretation"
     | "Programme"

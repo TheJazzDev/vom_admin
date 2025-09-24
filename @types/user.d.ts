@@ -1,6 +1,6 @@
 declare global {
   type Gender = "male" | "female";
-  type AuthType = "email" | "phone";
+  type AuthType = "" | "email" | "phone";
   type AccountType = "member" | "guest";
   type Role = "user" | "admin" | "super_admin";
   type MaritalStatus =
@@ -9,6 +9,8 @@ declare global {
     | "divorced"
     | "widowed"
     | "separated";
+
+  type Ministry = "Children Ministry" | "Youth Fellowship";
 
   interface UserProfile {
     id: string;
@@ -29,16 +31,19 @@ declare global {
     dob: string;
     occupation: string;
     maritalStatus: MaritalStatus;
-    department: Department[];
-    band: Band[];
+    departmentKeys: DepartmentKeys[];
+    department: DepartmentData[];
+    band: BandData[];
+    bandKeys: BandKeys[];
     ministry: Ministry[];
-    hasPassword?: boolean;
-    authType: AuthType;
     primaryPhone: string;
     secondaryPhone?: string;
+    authType: AuthType;
+    hasPassword?: boolean;
     emailVerified: boolean;
     phoneVerified: boolean;
     accountType: AccountType;
+    lastLoginAt: string;
   }
 }
 

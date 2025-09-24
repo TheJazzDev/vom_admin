@@ -2,6 +2,17 @@
 
 import { Users } from "lucide-react";
 import {
+  IoHeartOutline,
+  IoHelpCircleOutline,
+  IoMusicalNoteOutline,
+  IoPersonAddOutline,
+  IoShieldHalfOutline,
+  IoShieldOutline,
+  IoSparklesOutline,
+  IoStarOutline,
+  IoWomanOutline,
+} from "react-icons/io5";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -9,8 +20,31 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export const BandCard = ({ band }: { band: BandWithDetailsProps }) => {
-  const Icon = band.icon;
+export const BandCard = ({ band }: { band: Band }) => {
+  const getIcon = () => {
+    switch (band?.icon2) {
+      case "IoMusicalNoteOutline":
+        return <IoMusicalNoteOutline />;
+      case "IoHeartOutline":
+        return <IoHeartOutline />;
+      case "IoShieldOutline":
+        return <IoShieldOutline />;
+      case "IoSparklesOutline":
+        return <IoSparklesOutline />;
+      case "IoWomanOutline":
+        return <IoWomanOutline />;
+      case "IoShieldHalfOutline":
+        return <IoShieldHalfOutline />;
+      case "IoHelpCircleOutline":
+        return <IoHelpCircleOutline />;
+      case "IoStarOutline":
+        return <IoStarOutline />;
+      case "IoPersonAddOutline":
+        return <IoPersonAddOutline />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <Card className="h-[180px] py-4 flex flex-col justify-between bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300 cursor-pointer group">
@@ -24,7 +58,7 @@ export const BandCard = ({ band }: { band: BandWithDetailsProps }) => {
                   background: `linear-gradient(135deg, ${band.gradient[0]}, ${band.gradient[1]})`,
                 }}
               >
-                <Icon />
+                {getIcon()}
               </div>
               <div>
                 <CardTitle className="text-lg font-bold text-gray-900 dark:text-gray-100">

@@ -1,20 +1,20 @@
-import { IconPlus, IconTrash, IconX } from '@tabler/icons-react';
-import { useState } from 'react';
-import type { Control } from 'react-hook-form';
-import type z from 'zod';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { IconPlus, IconTrash, IconX } from "@tabler/icons-react";
+import { useState } from "react";
+import type { Control } from "react-hook-form";
+import type z from "zod";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { FormField, FormItem, FormMessage } from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { BandDisplayNames, BandKeys } from '@/enums/bands';
-import { formToDisplay, getAvailableRoles } from '@/utils/bandConverter';
-import type { memberEditSchema } from '../Schemas/memberEditSchema';
+} from "@/components/ui/select";
+import { BandDisplayNames, BandKeys } from "@/enums/bands";
+import { formToDisplay, getAvailableRoles } from "@/utils/bandConverter";
+import type { memberEditSchema } from "../Schemas/memberEditSchema";
 
 type MemberEditForm = z.infer<typeof memberEditSchema>;
 
@@ -39,16 +39,16 @@ export const BandSelectField = ({
   disabled = false,
   required = false,
 }: BandSelectFieldProps) => {
-  const [selectedBandName, setSelectedBandName] = useState<BandKeys | ''>('');
-  const [selectedBandRole, setSelectedBandRole] = useState<BandRole | ''>('');
+  const [selectedBandName, setSelectedBandName] = useState<BandKeys | "">("");
+  const [selectedBandRole, setSelectedBandRole] = useState<BandRole | "">("");
 
   const isBandDataArray = (value: any): value is BandData[] => {
     return (
       Array.isArray(value) &&
       (value.length === 0 ||
-        (typeof value[0] === 'object' &&
-          'name' in value[0] &&
-          'role' in value[0]))
+        (typeof value[0] === "object" &&
+          "name" in value[0] &&
+          "role" in value[0]))
     );
   };
 
@@ -59,7 +59,7 @@ export const BandSelectField = ({
   return (
     <FormField
       control={control}
-      name='band'
+      name="band"
       render={({ field }) => {
         const currentBands: BandData[] = isBandDataArray(field.value)
           ? field.value
@@ -69,7 +69,7 @@ export const BandSelectField = ({
         const handleAddBand = () => {
           if (selectedBandName && selectedBandRole) {
             const bandExists = currentBands.some(
-              (band: BandData) => band.name === selectedBandName
+              (band: BandData) => band.name === selectedBandName,
             );
 
             if (!bandExists) {
@@ -84,8 +84,8 @@ export const BandSelectField = ({
                 field.onBlur();
               }, 0);
 
-              setSelectedBandName('');
-              setSelectedBandRole('');
+              setSelectedBandName("");
+              setSelectedBandRole("");
             }
           }
         };
@@ -109,87 +109,93 @@ export const BandSelectField = ({
 
         return (
           <FormItem>
-            <p className='capitalize'>
-              Band {required && <span className='text-red-500'>*</span>}
+            <p className="capitalize">
+              Band {required && <span className="text-red-500">*</span>}
             </p>
-            <div className='space-y-2'>
+            <div className="space-y-2">
               {/* Display current bands */}
               <div
                 className={`flex flex-wrap gap-1 min-h-[32px] p-2 border rounded-md relative ${
-                  disabled ? 'bg-muted/50 border-muted cursor-not-allowed' : ''
-                }`}>
+                  disabled ? "bg-muted/50 border-muted cursor-not-allowed" : ""
+                }`}
+              >
                 {displayBands.length > 0 ? (
                   <>
                     {displayBands.map((band: DisplayBand, index: number) => (
                       <Badge
                         key={index}
-                        variant='secondary'
-                        className={`text-xs ${disabled ? 'opacity-50' : ''}`}>
+                        variant="secondary"
+                        className={`text-xs ${disabled ? "opacity-50" : ""}`}
+                      >
                         {band.displayName} - {band.roleDisplay}
                         <button
-                          type='button'
+                          type="button"
                           disabled={disabled}
                           onClick={() => handleRemoveBand(index)}
-                          className={disabled ? 'cursor-not-allowed' : ''}>
+                          className={disabled ? "cursor-not-allowed" : ""}
+                        >
                           <IconX
                             className={`ml-1 h-3 w-3 ${
                               disabled
-                                ? 'text-muted-foreground cursor-not-allowed'
-                                : 'cursor-pointer hover:text-red-500'
+                                ? "text-muted-foreground cursor-not-allowed"
+                                : "cursor-pointer hover:text-red-500"
                             }`}
                           />
                         </button>
                       </Badge>
                     ))}
                     <Button
-                      size='sm'
-                      type='button'
-                      variant='ghost'
+                      size="sm"
+                      type="button"
+                      variant="ghost"
                       disabled={disabled}
                       onClick={handleClearAllBands}
                       className={`h-6 px-2 text-xs absolute top-1 right-1 ${
                         disabled
-                          ? 'text-muted-foreground cursor-not-allowed opacity-50'
-                          : 'text-muted-foreground hover:text-red-500'
-                      }`}>
-                      <IconTrash className='h-3 w-3' />
+                          ? "text-muted-foreground cursor-not-allowed opacity-50"
+                          : "text-muted-foreground hover:text-red-500"
+                      }`}
+                    >
+                      <IconTrash className="h-3 w-3" />
                     </Button>
                   </>
                 ) : (
                   <span
                     className={`text-sm ${
                       disabled
-                        ? 'text-muted-foreground/50'
-                        : 'text-muted-foreground'
-                    }`}>
+                        ? "text-muted-foreground/50"
+                        : "text-muted-foreground"
+                    }`}
+                  >
                     No bands selected
                   </span>
                 )}
               </div>
 
               {/* Band selection form */}
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-2 items-end'>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 items-end">
                 <div>
-                  <p className='text-xs text-muted-foreground mb-1 block'>
+                  <p className="text-xs text-muted-foreground mb-1 block">
                     Band Name
                   </p>
                   <Select
                     value={selectedBandName}
                     onValueChange={(value: BandKeys) => {
                       setSelectedBandName(value);
-                      setSelectedBandRole('');
+                      setSelectedBandRole("");
                     }}
-                    disabled={disabled}>
-                    <SelectTrigger className='w-full'>
-                      <SelectValue placeholder='Select band' />
+                    disabled={disabled}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select band" />
                     </SelectTrigger>
                     <SelectContent>
                       {Object.values(BandKeys)
                         .filter(
                           (bandKey) =>
                             !currentBands.some(
-                              (band: BandData) => band.name === bandKey
-                            )
+                              (band: BandData) => band.name === bandKey,
+                            ),
                         )
                         .map((bandKey) => (
                           <SelectItem key={bandKey} value={bandKey}>
@@ -201,7 +207,7 @@ export const BandSelectField = ({
                 </div>
 
                 <div>
-                  <p className='text-xs text-muted-foreground mb-1 block'>
+                  <p className="text-xs text-muted-foreground mb-1 block">
                     Role
                   </p>
                   <Select
@@ -209,9 +215,10 @@ export const BandSelectField = ({
                     onValueChange={(value: BandRole) =>
                       setSelectedBandRole(value)
                     }
-                    disabled={disabled || !selectedBandName}>
-                    <SelectTrigger className='w-full'>
-                      <SelectValue placeholder='Select role' />
+                    disabled={disabled || !selectedBandName}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select role" />
                     </SelectTrigger>
                     <SelectContent>
                       {availableRoles().map((role) => (
@@ -224,12 +231,13 @@ export const BandSelectField = ({
                 </div>
 
                 <Button
-                  type='button'
-                  size='sm'
+                  type="button"
+                  size="sm"
                   disabled={disabled || !selectedBandName || !selectedBandRole}
                   onClick={handleAddBand}
-                  className='h-10'>
-                  <IconPlus className='h-4 w-4 mr-1' />
+                  className="h-10"
+                >
+                  <IconPlus className="h-4 w-4 mr-1" />
                   Add
                 </Button>
               </div>

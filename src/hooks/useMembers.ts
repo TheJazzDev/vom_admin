@@ -1,17 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
   createMember,
   getAllMembers,
   getMemberById,
   updateMember,
-} from "@/services/memberService";
+} from "@/services/members/memberService";
 
 // Query Keys
 export const memberKeys = {
   all: ["members"] as const,
   lists: () => [...memberKeys.all, "list"] as const,
-
   list: (filters: Record<string, any>) =>
     [...memberKeys.lists(), filters] as const,
   details: () => [...memberKeys.all, "detail"] as const,
@@ -47,9 +47,11 @@ export const useCreateMember = () => {
     mutationFn: createMember,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: memberKeys.all });
+      toast.success("Member created successfully!");
       router.push("/directory/members");
     },
     onError: (error) => {
+      toast.error(`Failed to create member: ${error}`);
       console.error("Failed to create member:", error);
     },
   });
@@ -63,6 +65,7 @@ export const useEditMember = () => {
     mutationFn: ({ id, data }: { id: string; data: MemberEditForm }) =>
       updateMember(id, data),
     onSuccess: () => {
+      toast.info("Member updated successfully!");
       queryClient.invalidateQueries({ queryKey: memberKeys.lists() });
     },
   });
