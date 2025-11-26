@@ -1,12 +1,13 @@
 "use client";
 
-import { Filter, Music, Plus, Users } from "lucide-react";
+import { Download, Filter, Music, Plus, Users } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAllBands } from "@/hooks/useBands";
 import { BandCard } from "./Components/BandCard";
 import { BandCardSkeleton } from "./Components/BandCardSkeleton";
+import { exportBandsToCSV } from "@/utils/exportUtils";
 
 const BandsPage = () => {
   const { data: bandsData, isLoading } = useAllBands();
@@ -15,6 +16,12 @@ const BandsPage = () => {
     bandsData?.reduce((sum, band) => sum + band.memberCount, 0) || 0;
 
   const totalBands = isLoading ? 0 : bandsData && bandsData.length - 1;
+
+  const handleExport = () => {
+    if (bandsData && bandsData.length > 0) {
+      exportBandsToCSV(bandsData);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
@@ -29,7 +36,15 @@ const BandsPage = () => {
               Manage church bands, their members, and leadership structure
             </p>
           </div>
-          <div className="flex">
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              className="border-gray-300 dark:border-gray-600"
+              onClick={handleExport}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
             <Button className="bg-blue-600 hover:bg-blue-700 text-white">
               <Plus className="h-4 w-4 mr-2" />
               Add Band

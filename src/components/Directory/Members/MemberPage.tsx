@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMembers } from "@/hooks/useMembers";
 import { MemberDataTable } from "./Table/MemberTable";
+import { exportMembersToCSV } from "@/utils/exportUtils";
 
 export const metadata = {
   title: "VOM - Members Directory",
@@ -105,7 +106,7 @@ const MemberStatsCard = ({
   </Card>
 );
 
-const QuickActions = () => (
+const QuickActions = ({ onExport }: { onExport: () => void }) => (
   <Card className="py-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
     <CardHeader>
       <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
@@ -128,6 +129,7 @@ const QuickActions = () => (
       <Button
         variant="outline"
         className="w-full justify-start border-gray-300 dark:border-gray-600"
+        onClick={onExport}
       >
         <Download className="h-4 w-4 mr-2" />
         Export Directory
@@ -249,6 +251,12 @@ const MembersPage = () => {
   const router = useRouter();
   const { data: members } = useMembers();
 
+  const handleExport = () => {
+    if (members && members.length > 0) {
+      exportMembersToCSV(members);
+    }
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -264,6 +272,7 @@ const MembersPage = () => {
           <Button
             variant="outline"
             className="border-gray-300 dark:border-gray-600"
+            onClick={handleExport}
           >
             <Download className="h-4 w-4 mr-2" />
             Export
@@ -313,7 +322,7 @@ const MembersPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <RecentMembers />
         <SearchAndFilter />
-        <QuickActions />
+        <QuickActions onExport={handleExport} />
       </div>
 
       <MemberDataTable data={members || []} />
