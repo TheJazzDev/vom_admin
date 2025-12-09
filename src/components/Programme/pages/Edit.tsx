@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import ShilohProgrammeForm from "../CreateProgramme/ShilohForm";
 import SundayProgrammeForm from "../CreateProgramme/SundayForm";
 import VigilProgrammeForm from "../CreateProgramme/VigilForm";
@@ -25,11 +26,11 @@ const Edit = () => {
   }
 
   return (
-    <>
+    <Suspense fallback={<div>Loading programme data...</div>}>
       {type === "sunday" && <SundayProgrammeForm type="sunday" />}
       {type === "shilo" && <ShilohProgrammeForm type="shilo" />}
       {type === "vigil" && <VigilProgrammeForm type="vigil" />}
-    </>
+    </Suspense>
   );
 };
 

@@ -1,4 +1,4 @@
-import CreateMemberPage from "@/components/Directory/Members/CreateMember/Form";
+import CreateMemberPage from "@/components/Directory/Members/Create";
 
 export const metadata = {
   title: "VOM - Member Create",

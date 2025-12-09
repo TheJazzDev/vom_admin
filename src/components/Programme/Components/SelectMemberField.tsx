@@ -64,8 +64,7 @@ export const SelectMemberField = ({
       control={control}
       name={name}
       render={({ field }) => {
-        const currentFieldName = name;
-        const selectedMembers = getSelectedMembers(currentFieldName);
+        const selectedMembers = getSelectedMembers(name);
 
         const _availableOptions = membersList.filter(
           (option) => !selectedMembers.includes(option.value),

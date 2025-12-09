@@ -10,3 +10,10 @@ export enum DepartmentKeysEnum {
   SANITATION = "SANITATION",
   SECRETARIAT = "SECRETARIAT",
 }
+
+export const DepartmentRoleEnum = [
+  "Head",
+  "Assistant",
+  "Secretary",
+  "Member",
+] as const;

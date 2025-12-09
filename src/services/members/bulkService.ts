@@ -128,6 +128,7 @@ export function parseSheetRowToMember(row: any[]): UserProfile {
     phoneVerified: false,
     accountType: "member",
     lastLoginAt: "",
+    role: "user",
   };
 }
 

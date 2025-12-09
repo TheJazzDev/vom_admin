@@ -20,7 +20,7 @@ function calculateBandSummary(
 
   members.forEach((member) => {
     // Find this member's role in this specific band
-    const bandData = member.band.find((b) => b.name === bandKey);
+    const bandData = member.band.find((b: BandKeys) => b.name === bandKey);
     if (bandData) {
       const fullName =
         `${member.title} ${member.firstName} ${member.lastName}`.trim();
@@ -83,7 +83,7 @@ export async function updateBandStatistics(): Promise<{
 
     members.forEach((member) => {
       if (member.band && member.band.length > 0) {
-        member.band.forEach((bandData) => {
+        member.band.forEach((bandData: BandData) => {
           const bandKey = bandData.name;
           if (!bandMemberMap.has(bandKey)) {
             bandMemberMap.set(bandKey, []);

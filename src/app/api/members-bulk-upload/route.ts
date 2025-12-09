@@ -12,7 +12,7 @@ export const maxDuration = 60;
 
 export async function GET() {
   try {
-    const csvPath = path.join(process.cwd(), "src/app/api/data", "test.csv");
+    const csvPath = path.join(process.cwd(), "src/app/api/data", "data.csv");
 
     // Read the CSV file from the file system
     const csvContent = await fs.readFile(csvPath, "utf-8");

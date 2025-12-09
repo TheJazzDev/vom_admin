@@ -21,6 +21,20 @@ import {
 import type { memberEditSchema } from "../Schemas/memberEditSchema";
 import { DEPARTMENTS, MINISTRIES, POSITIONS } from "../utils/dropdowns";
 
+// Define the types for your dropdown data
+interface Department {
+  // Add properties based on your actual Department type
+  id?: string;
+  name: string;
+}
+
+interface Ministry {
+  // Add properties based on your actual Ministry type
+  id?: string;
+  name: string;
+  // Add other properties as needed
+}
+
 type MemberEditForm = z.infer<typeof memberEditSchema>;
 type AllowedKeys = "department" | "ministry" | "position";
 
@@ -45,7 +59,7 @@ export const HybridMultiSelectField = ({
   const getFieldConfig: Record<
     AllowedKeys,
     {
-      options: string[];
+      options: string[] | Department[] | Ministry[];
       inputPlaceholder: string;
       selectPlaceholder: string;
     }
@@ -68,6 +82,14 @@ export const HybridMultiSelectField = ({
   };
 
   const fieldConfig = getFieldConfig[name];
+
+  // Helper function to get string value from option
+  const getOptionValue = (option: string | Department | Ministry): string => {
+    if (typeof option === "string") {
+      return option;
+    }
+    return option.name; // Assuming objects have a 'name' property
+  };
 
   return (
     <FormField
@@ -203,12 +225,18 @@ export const HybridMultiSelectField = ({
                     </SelectTrigger>
                     <SelectContent>
                       {fieldConfig.options
-                        .filter((option) => !currentValues.includes(option))
-                        .map((option) => (
-                          <SelectItem key={option} value={option}>
-                            {option}
-                          </SelectItem>
-                        ))}
+                        .filter((option) => {
+                          const optionValue = getOptionValue(option);
+                          return !currentValues.includes(optionValue);
+                        })
+                        .map((option) => {
+                          const optionValue = getOptionValue(option);
+                          return (
+                            <SelectItem key={optionValue} value={optionValue}>
+                              {optionValue}
+                            </SelectItem>
+                          );
+                        })}
                     </SelectContent>
                   </Select>
                 )}

@@ -1,30 +1,30 @@
 import z from "zod";
-import { BandKeys } from "@/enums";
+import { BandKeysEnum } from "@/enums";
 import { BandRoleEnum } from "@/enums/bands";
+import { DepartmentKeysEnum, DepartmentRoleEnum } from "@/enums/department";
 
 export const genderSchema = z.enum(["male", "female"]);
+export const departmentRoleSchema = z.enum(DepartmentRoleEnum);
 
-export const departmentSchema = z.enum([
-  "Interpretation",
-  "Programme",
-  "Media",
-  "Treasury",
-  "Technical",
-  "Drama",
-  "IT",
-  "Envagicialism",
-  "Sanitation",
+export const departmentNameSchema = z.enum([
+  DepartmentKeysEnum.INTERPRETATION,
+  DepartmentKeysEnum.PROGRAMME,
+  DepartmentKeysEnum.MEDIA,
+  DepartmentKeysEnum.TREASURY,
+  DepartmentKeysEnum.TECHNICAL,
+  DepartmentKeysEnum.DRAMA,
+  DepartmentKeysEnum.IT,
+  DepartmentKeysEnum.EVANGELISM,
+  DepartmentKeysEnum.SANITATION,
+  DepartmentKeysEnum.SECRETARIAT,
 ]);
 
-export const ministrySchema = z.enum(["Children Ministry", "Youth Fellowship"]);
+export const departmentSchema = z.object({
+  name: departmentNameSchema,
+  role: departmentRoleSchema,
+});
 
-const MARITAL_STATUS_OPTIONS = [
-  "single",
-  "married",
-  "divorced",
-  "widowed",
-  "separated",
-] as const;
+export const ministrySchema = z.enum(["Children Ministry", "Youth Fellowship"]);
 
 export const occupationSchema = z
   .string()
@@ -34,23 +34,35 @@ export const occupationSchema = z
     "Occupation must be at least 3 characters if provided",
   );
 
-export const maritalStatusSchema = z
-  .string()
-  .optional()
-  .refine((val) => {
-    if (!val) return true;
-    if (MARITAL_STATUS_OPTIONS.includes(val.toLowerCase() as MaritalStatus))
-      return true;
-    return val.length >= 3;
-  }, "Marital status must be a valid option or at least 3 characters if custom");
+const MARITAL_STATUS_OPTIONS = [
+  "single",
+  "married",
+  "divorced",
+  "widowed",
+  "separated",
+] as const;
 
-export const bandSchema = z.array(
-  z.object({
-    name: z.enum(BandKeys, {
-      error: () => ({ message: "Please select a valid band name" }),
-    }),
-    role: z.enum(BandRoleEnum, {
-      error: () => ({ message: "Please select a valid band role" }),
-    }),
-  }),
-);
+export const maritalStatusSchema = z.enum(MARITAL_STATUS_OPTIONS).optional();
+
+export const bandRoleSchema = z.enum(BandRoleEnum);
+
+export const bandNameSchema = z.enum([
+  BandKeysEnum.CHOIR,
+  BandKeysEnum.LOVE_DIVINE,
+  BandKeysEnum.DANIEL,
+  BandKeysEnum.DEBORAH,
+  BandKeysEnum.QUEEN_ESTHER,
+  BandKeysEnum.GOOD_WOMEN,
+  BandKeysEnum.WARDEN,
+  BandKeysEnum.JOHN_BELOVED,
+  BandKeysEnum.FAITH,
+  BandKeysEnum.HOLY_MARY,
+  BandKeysEnum.UNASSIGNED,
+]);
+
+export const bandDataSchema = z.object({
+  name: bandNameSchema,
+  role: bandRoleSchema,
+});
+
+export const bandSchema = z.array(bandDataSchema);

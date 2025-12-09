@@ -1,5 +1,45 @@
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+import { membersRef } from "@/config";
 import { db } from "@/config/firebase";
+
+export async function findExistingMemberByName(
+  firstName: string,
+  lastName: string,
+  primaryPhone: string,
+): Promise<string | null> {
+  try {
+    const snapshot = await getDocs(membersRef);
+
+    for (const doc of snapshot.docs) {
+      const member = doc.data();
+      if (
+        member.firstName?.toLowerCase() === firstName.toLowerCase() &&
+        member.lastName?.toLowerCase() === lastName.toLowerCase() &&
+        member.primaryPhone === primaryPhone
+      ) {
+        return doc.id;
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error("Error finding existing member:", error);
+    return null;
+  }
+}
+
+// In firebaseSync.ts
+export async function findExistingMemberById(
+  memberId: string,
+): Promise<boolean> {
+  try {
+    const docRef = doc(db, "members", memberId);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists();
+  } catch (error) {
+    console.error("Error checking existing member:", error);
+    return false;
+  }
+}
 
 export async function syncMemberToFirebase(
   newMemberData: UserProfile,
@@ -9,13 +49,47 @@ export async function syncMemberToFirebase(
   memberId: string;
 }> {
   try {
-    await setDoc(doc(db, "members", newMemberData.id), newMemberData);
+    // Check if member already exists by ID
+    const memberExists = await findExistingMemberById(newMemberData.id);
 
-    return {
-      success: true,
-      isNew: true,
-      memberId: newMemberData.id,
-    };
+    if (memberExists) {
+      // Member exists - get existing data and preserve protected fields
+      const existingDoc = await getDoc(doc(db, "members", newMemberData.id));
+      const existingData = existingDoc.data() as UserProfile;
+
+      // Preserve protected fields from existing data
+      const updateData: UserProfile = {
+        ...newMemberData,
+        // Preserve these fields if they exist
+        uid: existingData?.uid || newMemberData.uid,
+        authType: existingData?.authType || newMemberData.authType,
+        hasPassword: existingData?.hasPassword ?? newMemberData.hasPassword,
+        emailVerified:
+          existingData?.emailVerified ?? newMemberData.emailVerified,
+        phoneVerified:
+          existingData?.phoneVerified ?? newMemberData.phoneVerified,
+        verified: existingData?.verified ?? newMemberData.verified,
+        createdAt: existingData?.createdAt || newMemberData.createdAt,
+        lastLoginAt: existingData?.lastLoginAt || newMemberData.lastLoginAt,
+      };
+
+      await setDoc(doc(db, "members", newMemberData.id), updateData);
+
+      return {
+        success: true,
+        isNew: false,
+        memberId: newMemberData.id,
+      };
+    } else {
+      // New member - create with generated ID
+      await setDoc(doc(db, "members", newMemberData.id), newMemberData);
+
+      return {
+        success: true,
+        isNew: true,
+        memberId: newMemberData.id,
+      };
+    }
   } catch (error: any) {
     console.error(`Failed to sync member:`, error);
     return {

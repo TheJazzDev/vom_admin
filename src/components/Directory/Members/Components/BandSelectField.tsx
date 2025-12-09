@@ -1,7 +1,9 @@
+// FILE: components/Directory/Members/Components/BandSelectField.tsx
+// Simplified version - New members can only be assigned as "Member" role
+
 import { IconPlus, IconTrash, IconX } from "@tabler/icons-react";
 import { useState } from "react";
 import type { Control } from "react-hook-form";
-import type z from "zod";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FormField, FormItem, FormMessage } from "@/components/ui/form";
@@ -12,24 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BandDisplayNames, BandKeys } from "@/enums/bands";
-import { formToDisplay, getAvailableRoles } from "@/utils/bandConverter";
-import type { memberEditSchema } from "../Schemas/memberEditSchema";
-
-type MemberEditForm = z.infer<typeof memberEditSchema>;
-
-interface BandData {
-  name: BandKeys;
-  role: BandRole;
-}
-
-interface DisplayBand {
-  displayName: string;
-  roleDisplay: string;
-}
+import { BandKeysEnum } from "@/enums";
 
 interface BandSelectFieldProps {
-  control: Control<MemberEditForm>;
+  control: Control<CreateMemberData>;
   disabled?: boolean;
   required?: boolean;
 }
@@ -40,7 +28,6 @@ export const BandSelectField = ({
   required = false,
 }: BandSelectFieldProps) => {
   const [selectedBandName, setSelectedBandName] = useState<BandKeys | "">("");
-  const [selectedBandRole, setSelectedBandRole] = useState<BandRole | "">("");
 
   const isBandDataArray = (value: any): value is BandData[] => {
     return (
@@ -52,10 +39,6 @@ export const BandSelectField = ({
     );
   };
 
-  const availableRoles = (): BandRole[] => {
-    return selectedBandName ? getAvailableRoles(selectedBandName) : [];
-  };
-
   return (
     <FormField
       control={control}
@@ -64,10 +47,9 @@ export const BandSelectField = ({
         const currentBands: BandData[] = isBandDataArray(field.value)
           ? field.value
           : [];
-        const displayBands = formToDisplay(currentBands);
 
         const handleAddBand = () => {
-          if (selectedBandName && selectedBandRole) {
+          if (selectedBandName) {
             const bandExists = currentBands.some(
               (band: BandData) => band.name === selectedBandName,
             );
@@ -75,7 +57,7 @@ export const BandSelectField = ({
             if (!bandExists) {
               const newBand: BandData = {
                 name: selectedBandName,
-                role: selectedBandRole,
+                role: "Member",
               };
               const updatedBands = [...currentBands, newBand];
               field.onChange(updatedBands);
@@ -85,7 +67,6 @@ export const BandSelectField = ({
               }, 0);
 
               setSelectedBandName("");
-              setSelectedBandRole("");
             }
           }
         };
@@ -109,33 +90,35 @@ export const BandSelectField = ({
 
         return (
           <FormItem>
-            <p className="capitalize">
+            <p className="text-sm font-medium">
               Band {required && <span className="text-red-500">*</span>}
             </p>
             <div className="space-y-2">
               {/* Display current bands */}
               <div
-                className={`flex flex-wrap gap-1 min-h-[32px] p-2 border rounded-md relative ${
+                className={`flex flex-wrap gap-2 min-h-[42px] p-2 border rounded-md relative ${
                   disabled ? "bg-muted/50 border-muted cursor-not-allowed" : ""
                 }`}
               >
-                {displayBands.length > 0 ? (
+                {currentBands.length > 0 ? (
                   <>
-                    {displayBands.map((band: DisplayBand, index: number) => (
+                    {currentBands.map((band: BandData, index: number) => (
                       <Badge
                         key={index}
                         variant="secondary"
                         className={`text-xs ${disabled ? "opacity-50" : ""}`}
                       >
-                        {band.displayName} - {band.roleDisplay}
+                        {band.name}
                         <button
                           type="button"
                           disabled={disabled}
                           onClick={() => handleRemoveBand(index)}
-                          className={disabled ? "cursor-not-allowed" : ""}
+                          className={`ml-2 ${
+                            disabled ? "cursor-not-allowed" : ""
+                          }`}
                         >
                           <IconX
-                            className={`ml-1 h-3 w-3 ${
+                            className={`h-3 w-3 ${
                               disabled
                                 ? "text-muted-foreground cursor-not-allowed"
                                 : "cursor-pointer hover:text-red-500"
@@ -172,60 +155,36 @@ export const BandSelectField = ({
                 )}
               </div>
 
-              {/* Band selection form */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 items-end">
-                <div>
+              {/* Band selection form - Only band name, role is always "Member" */}
+              <div className="flex gap-2 items-end">
+                <div className="flex-1">
                   <p className="text-xs text-muted-foreground mb-1 block">
-                    Band Name
+                    Select Band
                   </p>
                   <Select
                     value={selectedBandName}
                     onValueChange={(value: BandKeys) => {
                       setSelectedBandName(value);
-                      setSelectedBandRole("");
                     }}
                     disabled={disabled}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select band" />
+                      <SelectValue placeholder="Select band to add" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.values(BandKeys)
+                      {Object.values(BandKeysEnum)
                         .filter(
                           (bandKey) =>
+                            bandKey !== BandKeysEnum.UNASSIGNED &&
                             !currentBands.some(
                               (band: BandData) => band.name === bandKey,
                             ),
                         )
                         .map((bandKey) => (
                           <SelectItem key={bandKey} value={bandKey}>
-                            {BandDisplayNames[bandKey]}
+                            {bandKey}
                           </SelectItem>
                         ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1 block">
-                    Role
-                  </p>
-                  <Select
-                    value={selectedBandRole}
-                    onValueChange={(value: BandRole) =>
-                      setSelectedBandRole(value)
-                    }
-                    disabled={disabled || !selectedBandName}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableRoles().map((role) => (
-                        <SelectItem key={role} value={role}>
-                          {role}
-                        </SelectItem>
-                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -233,14 +192,18 @@ export const BandSelectField = ({
                 <Button
                   type="button"
                   size="sm"
-                  disabled={disabled || !selectedBandName || !selectedBandRole}
+                  disabled={disabled || !selectedBandName}
                   onClick={handleAddBand}
                   className="h-10"
                 >
                   <IconPlus className="h-4 w-4 mr-1" />
-                  Add
+                  Add as Member
                 </Button>
               </div>
+
+              <p className="text-xs text-muted-foreground">
+                New members are automatically assigned as "Member" role
+              </p>
             </div>
             <FormMessage />
           </FormItem>

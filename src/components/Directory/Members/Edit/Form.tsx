@@ -18,11 +18,9 @@ import {
 } from "@/components/ui/drawer";
 import { Form } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
-import type { BandKeys } from "@/enums";
 import type { BandRoleEnum } from "@/enums/bands";
 import { useEditMember } from "@/hooks/useMembers";
 import { memberEditSchema } from "../Schemas/memberEditSchema";
-import type { tableSchema } from "../Schemas/tableSchema";
 import AccountControls from "./AccountControls";
 import BasicInformation from "./BasicInformation";
 import ChurchInformation from "./ChurchInformation";
@@ -33,7 +31,7 @@ type MemberEditForm = z.infer<typeof memberEditSchema>;
 interface FormProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  item: z.infer<typeof tableSchema>;
+  item: UserProfile;
   currentUserRole?: "admin" | "super_admin";
 }
 
@@ -60,7 +58,7 @@ export function EditMemberForm({
     department: Array.isArray(item.department) ? item.department : [],
     band: Array.isArray(item.band)
       ? (item.band.filter(
-          (band) =>
+          (band: BandRoleEnum) =>
             band &&
             typeof band === "object" &&
             "name" in band &&

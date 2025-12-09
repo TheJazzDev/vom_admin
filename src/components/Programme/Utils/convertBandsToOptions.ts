@@ -12,7 +12,7 @@ export function convertBandsToOptions(
         `${member.title} ${member.firstName} ${member.lastName}`.trim();
 
       return {
-        label: `${fullName} (${bandGroup.id} band)`,
+        label: `${fullName} (${bandGroup.displayName})`,
         value: fullName,
       };
     }),

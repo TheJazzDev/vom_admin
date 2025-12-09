@@ -148,3 +148,132 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+/* ================================================
+   PRINT STYLES
+   ================================================ */
+@media print {
+  /* Hide non-essential elements when printing */
+  .sidebar,
+  header,
+  button,
+  .no-print,
+  [data-sidebar],
+  [data-sidebar-trigger],
+  nav,
+  .pagination {
+    display: none !important;
+  }
+
+  /* Reset margins and padding for print */
+  body {
+    margin: 0;
+    padding: 0;
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Make main content full width */
+  main,
+  .print-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 1rem !important;
+  }
+
+  /* Ensure tables print nicely */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    page-break-inside: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  td,
+  th {
+    border: 1px solid #ddd !important;
+    padding: 8px !important;
+    font-size: 10pt !important;
+  }
+
+  th {
+    background-color: #f0f0f0 !important;
+    font-weight: bold !important;
+    color: black !important;
+  }
+
+  /* Add page breaks for large content */
+  .page-break {
+    page-break-after: always;
+  }
+
+  /* Ensure proper sizing */
+  @page {
+    size: A4;
+    margin: 1.5cm;
+  }
+
+  /* Headers and titles */
+  h1,
+  h2,
+  h3 {
+    page-break-after: avoid;
+    color: black !important;
+  }
+
+  h1 {
+    font-size: 18pt !important;
+    margin-bottom: 12pt !important;
+  }
+
+  h2 {
+    font-size: 14pt !important;
+    margin-bottom: 10pt !important;
+  }
+
+  h3 {
+    font-size: 12pt !important;
+    margin-bottom: 8pt !important;
+  }
+
+  /* Stats cards - make them print-friendly */
+  .stats-card {
+    border: 1px solid #ddd !important;
+    padding: 10px !important;
+    margin-bottom: 10px !important;
+    page-break-inside: avoid;
+  }
+
+  /* Links - show URL */
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 90%;
+    color: #666;
+  }
+
+  /* Prevent orphans and widows */
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Remove shadows and fancy effects */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Print background colors if needed */
+  /* -webkit-print-color-adjust: exact; */
+  /* print-color-adjust: exact; */
+}

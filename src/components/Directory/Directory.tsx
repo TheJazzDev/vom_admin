@@ -193,7 +193,7 @@ const DirectoryPage = () => {
             Comprehensive management hub for all church directory sections
           </p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600">
+        <Button className="text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600">
           <Plus className="h-4 w-4 mr-2" />
           Quick Add
         </Button>

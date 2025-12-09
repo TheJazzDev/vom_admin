@@ -19,10 +19,7 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table";
-import * as React from "react";
-
-import type { z } from "zod";
-
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -41,23 +38,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import type { tableSchema } from "../Schemas/tableSchema";
 import { columns } from "./columns";
 import TableTitleAndFilters from "./Filters";
 
-export function MemberDataTable({
-  data,
-}: {
-  data: z.infer<typeof tableSchema>[];
-}) {
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [pagination, setPagination] = React.useState({
+export function MemberDataTable({ data }: { data: UserProfile[] }) {
+  const [rowSelection, setRowSelection] = useState({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    verified: false,
+    maritalStatus: false,
+    band: false,
+    department: false,
+  });
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
@@ -175,7 +169,7 @@ export function MemberDataTable({
               </Select>
             </div>
             <div className="flex w-fit items-center justify-center text-sm font-medium">
-              Page {table.getState().pagination.pageindex} of{" "}
+              Page {table.getState().pagination.pageIndex} of{" "}
               {table.getPageCount()}
             </div>
             <div className="ml-auto flex items-center gap-2 lg:ml-0">

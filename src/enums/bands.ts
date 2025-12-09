@@ -1,13 +1,23 @@
 // import type { IconType } from "react-icons/lib";
 
-// export enum BandRoleEnum {
-//   CAPTAIN = "Captain",
-//   VICE_CAPTAIN = "Vice Captain",
-//   SECRETARY = "Secretary",
-//   MEMBER = "Member",
-//   CHOIR_MASTER = "Choir Master",
-//   ASSISTANT_CHOIR_MASTER = "Assistant Choir Master",
-// }
+export enum BandRoleEnum {
+  CAPTAIN = "Captain",
+  VICE_CAPTAIN = "Vice Captain",
+  SECRETARY = "Secretary",
+  MEMBER = "Member",
+  CHOIR_MASTER = "Choir Master",
+  ASSISTANT_CHOIR_MASTER = "Assistant Choir Master",
+}
+
+// export const BandRoleEnum = [
+//   "Choir Master",
+//   "Captain",
+//   "Assistant Choir Master",
+//   "Vice Captain",
+//   "Treasurer",
+//   "Secretary",
+//   "Member",
+// ] as const;
 
 export enum BandKeysEnum {
   CHOIR = "CHOIR",
@@ -24,17 +34,17 @@ export enum BandKeysEnum {
 }
 
 // export const BandDisplayNames: Record<BandKeys, string> = {
-//   [BandKeys.CHOIR]: "Choir",
-//   [BandKeys.LOVE_DIVINE]: "Love Divine",
-//   [BandKeys.DANIEL]: "Daniel",
-//   [BandKeys.DEBORAH]: "Deborah",
-//   [BandKeys.QUEEN_ESTHER]: "Queen Esther",
-//   [BandKeys.GOOD_WOMEN]: "Good Women",
-//   [BandKeys.WARDEN]: "Warden",
-//   [BandKeys.JOHN_BELOVED]: "John Beloved",
-//   [BandKeys.FAITH]: "Faith",
-//   [BandKeys.HOLY_MARY]: "Holy Mary",
-//   [BandKeys.UNASSIGNED]: "Unassigned",
+//   [BandKeysEnum.CHOIR]: "Choir",
+//   [BandKeysEnum.LOVE_DIVINE]: "Love Divine",
+//   [BandKeysEnum.DANIEL]: "Daniel",
+//   [BandKeysEnum.DEBORAH]: "Deborah",
+//   [BandKeysEnum.QUEEN_ESTHER]: "Queen Esther",
+//   [BandKeysEnum.GOOD_WOMEN]: "Good Women",
+//   [BandKeysEnum.WARDEN]: "Warden",
+//   [BandKeysEnum.JOHN_BELOVED]: "John Beloved",
+//   [BandKeysEnum.FAITH]: "Faith",
+//   [BandKeysEnum.HOLY_MARY]: "Holy Mary",
+//   [BandKeysEnum.UNASSIGNED]: "Unassigned",
 // };
 
 // export interface BandConfigEntry {

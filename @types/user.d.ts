@@ -1,3 +1,5 @@
+import { userSchema } from "@/components/Directory/Members/Schemas/tableSchema";
+
 declare global {
   type Gender = "male" | "female";
   type AuthType = "" | "email" | "phone";
@@ -12,39 +14,5 @@ declare global {
 
   type Ministry = "Children Ministry" | "Youth Fellowship";
 
-  interface UserProfile {
-    id: string;
-    uid: string;
-    avatar: string;
-    firstName: string;
-    middleName: string;
-    lastName: string;
-    email: string;
-    title: string;
-    position: string[];
-    address: string;
-    joinDate: string;
-    createdAt: string;
-    status: "active" | "inactive";
-    verified: boolean;
-    gender: Gender;
-    dob: string;
-    occupation: string;
-    maritalStatus: MaritalStatus;
-    departmentKeys: DepartmentKeys[];
-    department: DepartmentData[];
-    band: BandData[];
-    bandKeys: BandKeys[];
-    ministry: Ministry[];
-    primaryPhone: string;
-    secondaryPhone?: string;
-    authType: AuthType;
-    hasPassword?: boolean;
-    emailVerified: boolean;
-    phoneVerified: boolean;
-    accountType: AccountType;
-    lastLoginAt: string;
-  }
+  type UserProfile = z.infer<typeof userSchema>;
 }
-
-export {};

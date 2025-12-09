@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
+import { useMemo } from "react";
 import {
   Area,
   AreaChart,
@@ -54,6 +55,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useMembers } from "@/hooks/useMembers";
+import { useProgrammes } from "@/hooks/useProgrammes";
 
 // Mock data for dashboard
 const dashboardData = {
@@ -702,6 +705,83 @@ const MinistryHighlightsWidget = () => (
 );
 
 const MainDashboard = () => {
+  const { data: members, isLoading: membersLoading } = useMembers();
+  const { data: programmes, isLoading: programmesLoading } = useProgrammes();
+
+  // Calculate real statistics from actual data
+  const stats = useMemo(() => {
+    if (!members) {
+      return {
+        totalMembers: 0,
+        activeMembers: 0,
+        inactiveMembers: 0,
+        newThisMonth: 0,
+        activeBands: 0,
+        departments: 0,
+        upcomingProgrammes: 0,
+        pastProgrammes: 0,
+      };
+    }
+
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    const activeMembers = members.filter((m) => m.status === 'active').length;
+    const inactiveMembers = members.filter((m) => m.status === 'inactive').length;
+
+    const newThisMonth = members.filter((m) => {
+      if (!m.createdAt) return false;
+      const createdDate = new Date(m.createdAt);
+      return (
+        createdDate.getMonth() === currentMonth &&
+        createdDate.getFullYear() === currentYear
+      );
+    }).length;
+
+    // Get unique bands
+    const uniqueBands = new Set<string>();
+    members.forEach((m) => {
+      m.band?.forEach((b) => uniqueBands.add(b.name));
+    });
+
+    // Get unique departments
+    const uniqueDepartments = new Set<string>();
+    members.forEach((m) => {
+      m.department?.forEach((d) => uniqueDepartments.add(d.name));
+    });
+
+    const upcomingProgrammes = programmes?.filter((p) => p.status === 'upcoming').length || 0;
+    const pastProgrammes = programmes?.filter((p) => p.status === 'past').length || 0;
+
+    return {
+      totalMembers: members.length,
+      activeMembers,
+      inactiveMembers,
+      newThisMonth,
+      activeBands: uniqueBands.size,
+      departments: uniqueDepartments.size,
+      upcomingProgrammes,
+      pastProgrammes,
+    };
+  }, [members, programmes]);
+
+  const growthPercentage = stats.totalMembers > 0
+    ? ((stats.newThisMonth / stats.totalMembers) * 100).toFixed(1)
+    : '0.0';
+
+  // Show loading state
+  if (membersLoading || programmesLoading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600 dark:text-gray-400">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mt-8 space-y-6">
       {/* Header */}
@@ -729,36 +809,36 @@ const MainDashboard = () => {
         </div>
       </div>
 
-      {/* Quick Stats */}
+      {/* Quick Stats - Using Real Data */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <QuickStatCard
           title="Total Members"
-          value={dashboardData.overview.totalMembers}
-          subtitle="+8.2% this month"
+          value={stats.totalMembers}
+          subtitle={`+${growthPercentage}% this month`}
           icon={Users}
           color="text-blue-600 dark:text-blue-400"
           href="/directory/members"
         />
         <QuickStatCard
-          title="Today's Attendance"
-          value={dashboardData.quickStats.todayAttendance}
-          subtitle="Sunday Service"
+          title="Active Members"
+          value={stats.activeMembers}
+          subtitle={`${stats.inactiveMembers} inactive`}
           icon={UserCheck}
           color="text-green-600 dark:text-green-400"
-          href="/info/events"
+          href="/directory/members"
         />
         <QuickStatCard
-          title="Active Programs"
-          value={dashboardData.quickStats.activePrograms}
-          subtitle="This week"
+          title="Upcoming Programmes"
+          value={stats.upcomingProgrammes}
+          subtitle={`${stats.pastProgrammes} past`}
           icon={Calendar}
           color="text-purple-600 dark:text-purple-400"
           href="/programmes"
         />
         <QuickStatCard
-          title="Pending Items"
-          value={dashboardData.quickStats.pendingApprovals}
-          subtitle="Needs attention"
+          title="New This Month"
+          value={stats.newThisMonth}
+          subtitle="New members"
           icon={Clock}
           color="text-orange-600 dark:text-orange-400"
         />
@@ -1175,21 +1255,18 @@ const MainDashboard = () => {
 
       {/* Main Sections Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Directory Section */}
+        {/* Directory Section - Using Real Data */}
         <SectionCard
           title="Directory"
           description="Manage members, bands, children & departments"
           icon={Users}
-          href="/admin/directory"
+          href="/directory"
           color="from-blue-600 to-blue-700"
           stats={[
-            { label: "Members", value: dashboardData.overview.totalMembers },
-            {
-              label: "Children",
-              value: dashboardData.overview.childrenPrograms,
-            },
-            { label: "Bands", value: dashboardData.overview.activeBands },
-            { label: "Departments", value: dashboardData.overview.departments },
+            { label: "Members", value: stats.totalMembers },
+            { label: "Active", value: stats.activeMembers },
+            { label: "Bands", value: stats.activeBands },
+            { label: "Departments", value: stats.departments },
           ]}
         />
 
@@ -1223,18 +1300,18 @@ const MainDashboard = () => {
           ]}
         />
 
-        {/* Programme Section */}
+        {/* Programme Section - Using Real Data */}
         <SectionCard
           title="Programme"
           description="Current, upcoming & past programs"
           icon={Calendar}
-          href="/admin/programme"
+          href="/programmes"
           color="from-orange-600 to-orange-700"
           stats={[
-            { label: "Current", value: 3 },
-            { label: "Upcoming", value: 7 },
-            { label: "Past", value: 45 },
-            { label: "This Month", value: 12 },
+            { label: "Total", value: programmes?.length || 0 },
+            { label: "Upcoming", value: stats.upcomingProgrammes },
+            { label: "Past", value: stats.pastProgrammes },
+            { label: "Active", value: stats.upcomingProgrammes },
           ]}
         />
 

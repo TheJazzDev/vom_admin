@@ -1,27 +1,15 @@
-export const DEPARTMENTS: Department[] = [
-  "Interpretation",
-  "Programme",
-  "Media",
-  "Treasury",
-  "Technical",
-  "Drama",
-  "IT",
-  "Envagicialism",
-  "Sanitation",
-];
+import { DepartmentKeysEnum } from "@/enums";
+import { BandRoleEnum } from "@/enums/bands";
 
-export const BANDS = [
-  "Choir",
-  "Love Divine",
-  "Daniel",
-  "Deborah",
-  "Queen Esther",
-  "Good Women",
-  "Warden",
-  "John Beloved",
-  "Faith",
-  "Holy Mary",
-];
+export const DEPARTMENTS = Object.values(DepartmentKeysEnum).map((key) => ({
+  id: key,
+  name: key,
+}));
+
+export const BANDS = Object.values(BandRoleEnum).map((role) => ({
+  id: role,
+  name: role,
+}));
 
 export const POSITIONS = ["Secretary", "Treasurer"];
 

@@ -1,34 +1,13 @@
 import z from "zod";
+import { BandKeysEnum, DepartmentKeysEnum } from "@/enums";
 
 const genderSchema = z.enum(["male", "female"]);
-const authTypeSchema = z.enum(["email", "phone"]);
+const authTypeSchema = z.enum(["", "email", "phone"]);
 const statusSchema = z.enum(["active", "inactive"]);
 const accountTypeSchema = z.enum(["member", "guest"]);
 
-const departmentSchema = z.enum([
-  "Interpretation",
-  "Programme",
-  "Media",
-  "Treasury",
-  "Technical",
-  "Drama",
-  "IT",
-  "Envagicialism",
-  "Sanitation",
-]);
-
-const bandSchema = z.enum([
-  "Choir",
-  "Love Divine",
-  "Daniel",
-  "Deborah",
-  "Queen Esther",
-  "Good Women",
-  "Warden",
-  "John Beloved",
-  "Faith",
-  "Holy Mary",
-]);
+const bandKeysSchema = z.enum(BandKeysEnum);
+const departmentKeysSchema = z.enum(DepartmentKeysEnum);
 
 const ministrySchema = z.enum(["Children Ministry", "Youth Fellowship"]);
 
@@ -60,8 +39,10 @@ export const tableSchema = z.object({
   // Church information
   joinDate: z.string(),
   position: z.array(z.string()).optional(),
-  department: z.array(departmentSchema).optional(),
-  band: z.array(bandSchema).optional(),
+  band: z.array(z.object({ name: "", role: "" })).optional(),
+  bandKeys: z.array(bandKeysSchema).optional(),
+  departmentKeys: z.array(departmentKeysSchema).optional(),
+  department: z.array(z.object({ name: "", role: "" })).optional(),
   ministry: z.array(ministrySchema).optional(),
 
   // Status and verification
@@ -70,8 +51,10 @@ export const tableSchema = z.object({
   verified: z.boolean(),
   emailVerified: z.boolean(),
   phoneVerified: z.boolean(),
+  role: z.string().optional(),
 
   // Authentication
   authType: authTypeSchema,
   hasPassword: z.boolean().optional(),
+  lastLogin: z.string().optional(),
 });
