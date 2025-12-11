@@ -1,7 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Download, Printer } from 'lucide-react';
+import { Download, Printer } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,20 +11,18 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useExportMembers } from '@/hooks/useMembers';
-import { toast } from 'sonner';
-import { BANDS_CONFIG } from '@/constants/directory/BANDS_CONFIG';
-import { DEPARTMENTS_CONFIG } from '@/constants/directory/DEPARTMENTS_CONFIG';
+} from "@/components/ui/select";
+import { BANDS_CONFIG } from "@/constants/directory/BANDS_CONFIG";
+import { DEPARTMENTS_CONFIG } from "@/constants/directory/DEPARTMENTS_CONFIG";
+import { useExportMembers } from "@/hooks/useMembers";
 
 interface ExportDialogProps {
   open: boolean;
@@ -30,12 +30,12 @@ interface ExportDialogProps {
 }
 
 export function ExportDialog({ open, onOpenChange }: ExportDialogProps) {
-  const [filterType, setFilterType] = useState<'all' | 'band' | 'department' | 'status'>(
-    'all'
-  );
-  const [selectedBand, setSelectedBand] = useState<string>('');
-  const [selectedDepartment, setSelectedDepartment] = useState<string>('');
-  const [selectedStatus, setSelectedStatus] = useState<string>('');
+  const [filterType, setFilterType] = useState<
+    "all" | "band" | "department" | "status"
+  >("all");
+  const [selectedBand, setSelectedBand] = useState<string>("");
+  const [selectedDepartment, setSelectedDepartment] = useState<string>("");
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const exportMembers = useExportMembers();
 
@@ -43,20 +43,20 @@ export function ExportDialog({ open, onOpenChange }: ExportDialogProps) {
     try {
       const filters: any = {};
 
-      if (filterType === 'band' && selectedBand) {
+      if (filterType === "band" && selectedBand) {
         filters.band = selectedBand;
-      } else if (filterType === 'department' && selectedDepartment) {
+      } else if (filterType === "department" && selectedDepartment) {
         filters.department = selectedDepartment;
-      } else if (filterType === 'status' && selectedStatus) {
+      } else if (filterType === "status" && selectedStatus) {
         filters.status = selectedStatus;
       }
 
       await exportMembers.mutateAsync(filters);
-      toast.success('Members exported successfully!');
+      toast.success("Members exported successfully!");
       onOpenChange(false);
     } catch (error) {
-      console.error('Export error:', error);
-      toast.error('Failed to export members');
+      console.error("Export error:", error);
+      toast.error("Failed to export members");
     }
   };
 
@@ -79,7 +79,10 @@ export function ExportDialog({ open, onOpenChange }: ExportDialogProps) {
           {/* Filter Type Selection */}
           <div className="grid gap-2">
             <Label>Filter By</Label>
-            <Select value={filterType} onValueChange={(value: any) => setFilterType(value)}>
+            <Select
+              value={filterType}
+              onValueChange={(value: any) => setFilterType(value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select filter type" />
               </SelectTrigger>
@@ -93,7 +96,7 @@ export function ExportDialog({ open, onOpenChange }: ExportDialogProps) {
           </div>
 
           {/* Band Selection */}
-          {filterType === 'band' && (
+          {filterType === "band" && (
             <div className="grid gap-2">
               <Label>Select Band</Label>
               <Select value={selectedBand} onValueChange={setSelectedBand}>
@@ -101,9 +104,9 @@ export function ExportDialog({ open, onOpenChange }: ExportDialogProps) {
                   <SelectValue placeholder="Choose a band" />
                 </SelectTrigger>
                 <SelectContent>
-                  {BANDS_CONFIG.map((band) => (
-                    <SelectItem key={band.id} value={band.id}>
-                      {band.displayName}
+                  {Object.values(BANDS_CONFIG).map((band) => (
+                    <SelectItem key={band.id} value={band.name}>
+                      {band.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -112,17 +115,20 @@ export function ExportDialog({ open, onOpenChange }: ExportDialogProps) {
           )}
 
           {/* Department Selection */}
-          {filterType === 'department' && (
+          {filterType === "department" && (
             <div className="grid gap-2">
               <Label>Select Department</Label>
-              <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+              <Select
+                value={selectedDepartment}
+                onValueChange={setSelectedDepartment}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Choose a department" />
                 </SelectTrigger>
                 <SelectContent>
-                  {DEPARTMENTS_CONFIG.map((dept) => (
-                    <SelectItem key={dept.id} value={dept.id}>
-                      {dept.displayName}
+                  {Object.values(DEPARTMENTS_CONFIG).map((dept) => (
+                    <SelectItem key={dept.id} value={dept.name}>
+                      {dept.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -131,7 +137,7 @@ export function ExportDialog({ open, onOpenChange }: ExportDialogProps) {
           )}
 
           {/* Status Selection */}
-          {filterType === 'status' && (
+          {filterType === "status" && (
             <div className="grid gap-2">
               <Label>Select Status</Label>
               <Select value={selectedStatus} onValueChange={setSelectedStatus}>
@@ -152,19 +158,19 @@ export function ExportDialog({ open, onOpenChange }: ExportDialogProps) {
               Export Summary:
             </p>
             <p className="text-blue-700 dark:text-blue-300">
-              {filterType === 'all' && 'All members will be exported'}
-              {filterType === 'band' &&
+              {filterType === "all" && "All members will be exported"}
+              {filterType === "band" &&
                 (selectedBand
-                  ? `Members in ${BANDS_CONFIG.find((b) => b.id === selectedBand)?.displayName} band`
-                  : 'Please select a band')}
-              {filterType === 'department' &&
+                  ? `Members in ${selectedBand} band`
+                  : "Please select a band")}
+              {filterType === "department" &&
                 (selectedDepartment
-                  ? `Members in ${DEPARTMENTS_CONFIG.find((d) => d.id === selectedDepartment)?.displayName} department`
-                  : 'Please select a department')}
-              {filterType === 'status' &&
+                  ? `Members in ${selectedDepartment} department`
+                  : "Please select a department")}
+              {filterType === "status" &&
                 (selectedStatus
                   ? `${selectedStatus.charAt(0).toUpperCase() + selectedStatus.slice(1)} members only`
-                  : 'Please select a status')}
+                  : "Please select a status")}
             </p>
           </div>
         </div>
@@ -184,14 +190,14 @@ export function ExportDialog({ open, onOpenChange }: ExportDialogProps) {
             onClick={handleExport}
             disabled={
               exportMembers.isPending ||
-              (filterType === 'band' && !selectedBand) ||
-              (filterType === 'department' && !selectedDepartment) ||
-              (filterType === 'status' && !selectedStatus)
+              (filterType === "band" && !selectedBand) ||
+              (filterType === "department" && !selectedDepartment) ||
+              (filterType === "status" && !selectedStatus)
             }
             className="gap-2"
           >
             <Download className="h-4 w-4" />
-            {exportMembers.isPending ? 'Exporting...' : 'Export CSV'}
+            {exportMembers.isPending ? "Exporting..." : "Export CSV"}
           </Button>
         </DialogFooter>
       </DialogContent>

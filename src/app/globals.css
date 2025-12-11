@@ -162,24 +162,24 @@ input[type="number"] {
   [data-sidebar-trigger],
   nav,
   .pagination {
-    display: none !important;
+    display: none;
   }
 
   /* Reset margins and padding for print */
   body {
     margin: 0;
     padding: 0;
-    background: white !important;
-    color: black !important;
+    background: white;
+    color: black;
   }
 
   /* Make main content full width */
   main,
   .print-content {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 1rem !important;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 1rem;
   }
 
   /* Ensure tables print nicely */
@@ -200,15 +200,15 @@ input[type="number"] {
 
   td,
   th {
-    border: 1px solid #ddd !important;
-    padding: 8px !important;
-    font-size: 10pt !important;
+    border: 1px solid #ddd;
+    padding: 8px;
+    font-size: 10pt;
   }
 
   th {
-    background-color: #f0f0f0 !important;
-    font-weight: bold !important;
-    color: black !important;
+    background-color: #f0f0f0;
+    font-weight: bold;
+    color: black;
   }
 
   /* Add page breaks for large content */
@@ -227,29 +227,29 @@ input[type="number"] {
   h2,
   h3 {
     page-break-after: avoid;
-    color: black !important;
+    color: black;
   }
 
   h1 {
-    font-size: 18pt !important;
-    margin-bottom: 12pt !important;
+    font-size: 18pt;
+    margin-bottom: 12pt;
   }
 
   h2 {
-    font-size: 14pt !important;
-    margin-bottom: 10pt !important;
+    font-size: 14pt;
+    margin-bottom: 10pt;
   }
 
   h3 {
-    font-size: 12pt !important;
-    margin-bottom: 8pt !important;
+    font-size: 12pt;
+    margin-bottom: 8pt;
   }
 
   /* Stats cards - make them print-friendly */
   .stats-card {
-    border: 1px solid #ddd !important;
-    padding: 10px !important;
-    margin-bottom: 10px !important;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
     page-break-inside: avoid;
   }
 
@@ -269,8 +269,8 @@ input[type="number"] {
 
   /* Remove shadows and fancy effects */
   * {
-    box-shadow: none !important;
-    text-shadow: none !important;
+    box-shadow: none;
+    text-shadow: none;
   }
 
   /* Print background colors if needed */

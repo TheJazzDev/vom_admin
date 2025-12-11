@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useMemo } from 'react';
-import { format } from 'date-fns';
+import { format } from "date-fns";
+import { useMemo } from "react";
 
 interface PrintableViewProps {
   members: UserProfile[];
@@ -9,16 +9,20 @@ interface PrintableViewProps {
   filterValue?: string;
 }
 
-export function PrintableView({ members, filterType, filterValue }: PrintableViewProps) {
+export function PrintableView({
+  members,
+  filterType,
+  filterValue,
+}: PrintableViewProps) {
   const filteredMembers = members;
 
   const title = useMemo(() => {
-    if (filterType === 'all' || !filterType) return 'All Members Directory';
-    if (filterType === 'band') return `${filterValue} Band Members`;
-    if (filterType === 'department') return `${filterValue} Department Members`;
-    if (filterType === 'status')
+    if (filterType === "all" || !filterType) return "All Members Directory";
+    if (filterType === "band") return `${filterValue} Band Members`;
+    if (filterType === "department") return `${filterValue} Department Members`;
+    if (filterType === "status" && filterValue)
       return `${filterValue.charAt(0).toUpperCase() + filterValue.slice(1)} Members`;
-    return 'Members Directory';
+    return "Members Directory";
   }, [filterType, filterValue]);
 
   return (
@@ -28,10 +32,12 @@ export function PrintableView({ members, filterType, filterValue }: PrintableVie
         <h1 className="text-2xl font-bold mb-2">Valley of Mercy Church</h1>
         <h2 className="text-xl">{title}</h2>
         <p className="text-sm text-gray-600 mt-2">
-          Generated on {format(new Date(), 'MMMM dd, yyyy')} at{' '}
-          {format(new Date(), 'hh:mm a')}
+          Generated on {format(new Date(), "MMMM dd, yyyy")} at{" "}
+          {format(new Date(), "hh:mm a")}
         </p>
-        <p className="text-sm font-medium mt-1">Total Members: {filteredMembers.length}</p>
+        <p className="text-sm font-medium mt-1">
+          Total Members: {filteredMembers.length}
+        </p>
       </div>
 
       {/* Stats Summary */}
@@ -39,25 +45,25 @@ export function PrintableView({ members, filterType, filterValue }: PrintableVie
         <div className="stats-card">
           <p className="text-xs text-gray-600">Active</p>
           <p className="text-lg font-bold">
-            {filteredMembers.filter((m) => m.status === 'active').length}
+            {filteredMembers.filter((m) => m.status === "active").length}
           </p>
         </div>
         <div className="stats-card">
           <p className="text-xs text-gray-600">Inactive</p>
           <p className="text-lg font-bold">
-            {filteredMembers.filter((m) => m.status === 'inactive').length}
+            {filteredMembers.filter((m) => m.status === "inactive").length}
           </p>
         </div>
         <div className="stats-card">
           <p className="text-xs text-gray-600">Male</p>
           <p className="text-lg font-bold">
-            {filteredMembers.filter((m) => m.gender === 'male').length}
+            {filteredMembers.filter((m) => m.gender === "male").length}
           </p>
         </div>
         <div className="stats-card">
           <p className="text-xs text-gray-600">Female</p>
           <p className="text-lg font-bold">
-            {filteredMembers.filter((m) => m.gender === 'female').length}
+            {filteredMembers.filter((m) => m.gender === "female").length}
           </p>
         </div>
       </div>
@@ -85,10 +91,10 @@ export function PrintableView({ members, filterType, filterValue }: PrintableVie
               <td className="text-xs">{member.email}</td>
               <td className="text-xs">{member.primaryPhone}</td>
               <td className="text-xs">
-                {member.band?.map((b) => b.name).join(', ') || 'N/A'}
+                {member.band?.map((b: any) => b.name).join(", ") || "N/A"}
               </td>
               <td className="text-xs">
-                {member.department?.map((d) => d.name).join(', ') || 'N/A'}
+                {member.department?.map((d: any) => d.name).join(", ") || "N/A"}
               </td>
               <td className="text-xs capitalize">{member.status}</td>
             </tr>

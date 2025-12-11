@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Edit } from "@/components/Programme";
 
 export const metadata = {
@@ -5,5 +6,9 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <Edit />;
+  return (
+    <Suspense fallback={<div className="p-6">Loading...</div>}>
+      <Edit />
+    </Suspense>
+  );
 }

@@ -1,35 +1,37 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { IconLock, IconMail, IconAlertCircle } from '@tabler/icons-react';
-import { toast } from 'sonner';
+import { IconAlertCircle, IconLock, IconMail } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const { login } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
     try {
       await login(email, password);
-      toast.success('Login successful! Welcome back.');
-      router.push('/');
+      toast.success("Login successful! Welcome back.");
+      router.push("/");
     } catch (err: any) {
-      console.error('Login failed:', err);
+      console.error("Login failed:", err);
       const errorMessage =
-        err?.message || err?.error || 'Login failed. Please check your credentials.';
+        err?.message ||
+        err?.error ||
+        "Login failed. Please check your credentials.";
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -65,7 +67,10 @@ export default function LoginPage() {
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">
+              <Label
+                htmlFor="email"
+                className="text-gray-700 dark:text-gray-300"
+              >
                 Email Address
               </Label>
               <div className="relative">
@@ -84,7 +89,10 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-gray-700 dark:text-gray-300">
+              <Label
+                htmlFor="password"
+                className="text-gray-700 dark:text-gray-300"
+              >
                 Password
               </Label>
               <div className="relative">
@@ -103,7 +111,7 @@ export default function LoginPage() {
             </div>
 
             <Button type="submit" disabled={isLoading} className="w-full">
-              {isLoading ? 'Signing in...' : 'Sign In'}
+              {isLoading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
 
@@ -116,7 +124,8 @@ export default function LoginPage() {
         {/* Additional Info */}
         <div className="mt-4 text-center text-xs text-gray-500 dark:text-gray-400">
           <p>
-            If you don't have admin access, please contact your system administrator
+            If you don't have admin access, please contact your system
+            administrator
           </p>
         </div>
       </div>

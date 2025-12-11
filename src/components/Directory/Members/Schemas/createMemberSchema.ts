@@ -20,7 +20,7 @@ export const createMemberSchema = z.object({
   dob: z.string().min(1, "Date of birth is required"),
   department: z.array(departmentSchema).optional().default([]),
   ministry: z.array(ministrySchema).optional().default([]),
-  // position: z.array(z.string()).optional().default([]),
+  position: z.array(z.string()).optional().default([]),
   occupation: occupationSchema.optional(),
   maritalStatus: maritalStatusSchema.optional(),
   band: bandSchema.optional().default([]),

@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { getAdminAuth, getAdminFirestore } from '@/lib/firebase-admin';
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+import { getAdminAuth, getAdminFirestore } from "@/lib/firebase-admin";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 // POST /api/auth/login - Create session cookie
 export async function POST(request: Request) {
@@ -13,9 +13,9 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          error: 'ID token is required',
+          error: "ID token is required",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -27,16 +27,16 @@ export async function POST(request: Request) {
     // Check if user has admin role
     const db = getAdminFirestore();
     const snapshot = await db
-      .collection('members')
-      .where('uid', '==', decodedToken.uid)
+      .collection("members")
+      .where("uid", "==", decodedToken.uid)
       .limit(1)
       .get();
 
     // User NOT found
     if (snapshot.empty) {
       return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
+        { success: false, error: "User not found" },
+        { status: 404 },
       );
     }
 
@@ -45,17 +45,17 @@ export async function POST(request: Request) {
     const userData = userDoc.data();
 
     // Check role
-    const userRole = userData.role || 'user';
+    const userRole = userData.role || "user";
 
-    if (userRole !== 'admin' && userRole !== 'super_admin') {
+    if (userRole !== "admin" && userRole !== "super_admin") {
       return NextResponse.json(
-        { success: false, error: 'Access denied. Admin privileges required.' },
-        { status: 403 }
+        { success: false, error: "Access denied. Admin privileges required." },
+        { status: 403 },
       );
     }
 
     // Update last login
-    await db.collection('members').doc(userDoc.id).update({
+    await db.collection("members").doc(userDoc.id).update({
       lastLoginAt: new Date().toISOString(),
     });
 
@@ -67,17 +67,17 @@ export async function POST(request: Request) {
 
     // Set cookie
     const cookieStore = await cookies();
-    cookieStore.set('session', sessionCookie, {
+    cookieStore.set("session", sessionCookie, {
       maxAge: expiresIn,
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
     });
 
     return NextResponse.json({
       success: true,
-      message: 'Login successful',
+      message: "Login successful",
       user: {
         id: userDoc.id,
         uid: decodedToken.uid,
@@ -88,14 +88,14 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error('Error logging in:', error);
+    console.error("Error logging in:", error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to login',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to login",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 401 }
+      { status: 401 },
     );
   }
 }

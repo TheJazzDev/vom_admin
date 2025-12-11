@@ -2,6 +2,7 @@
 
 import { Download, UserPlus } from "lucide-react";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 import {
   IoHeartOutline,
   IoHelpCircleOutline,
@@ -25,6 +26,8 @@ import {
 } from "@/components/ui/table";
 import { BandKeysEnum } from "@/enums";
 import { useBandWithMembers } from "@/hooks/useBands";
+import { BandExportDialog } from "./BandExportDialog";
+import { BandPrintableView } from "./BandPrintableView";
 
 const getBandKeyFromParam = (
   param: string | undefined,
@@ -38,6 +41,7 @@ const getBandKeyFromParam = (
 const BandDetailsPage = () => {
   const params = useParams();
   const bandKey = getBandKeyFromParam(params.band as string);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
 
   const { data: bandData, isLoading } = useBandWithMembers(bandKey as BandKeys);
 
@@ -68,7 +72,7 @@ const BandDetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-      <div className="max-w-7xl mx-auto p-6 space-y-8">
+      <div className="mx-auto p-6 space-y-8">
         {/* Band Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -91,7 +95,10 @@ const BandDetailsPage = () => {
           </div>
           {!isLoading && (
             <div className="flex gap-2">
-              <Button variant="outline">
+              <Button
+                variant="outline"
+                onClick={() => setExportDialogOpen(true)}
+              >
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </Button>
@@ -158,6 +165,23 @@ const BandDetailsPage = () => {
             </div>
           )}
         </div>
+
+        {/* Export Dialog */}
+        {bandData && (
+          <>
+            <BandExportDialog
+              open={exportDialogOpen}
+              onOpenChange={setExportDialogOpen}
+              bandName={bandData.name}
+              members={bandData.members || []}
+            />
+            <BandPrintableView
+              bandName={bandData.name}
+              bandDescription={bandData.description}
+              members={bandData.members || []}
+            />
+          </>
+        )}
       </div>
     </div>
   );

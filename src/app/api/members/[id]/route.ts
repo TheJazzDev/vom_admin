@@ -1,26 +1,26 @@
-import { NextResponse } from 'next/server';
-import { getAdminFirestore } from '@/lib/firebase-admin';
+import { NextResponse } from "next/server";
+import { getAdminFirestore } from "@/lib/firebase-admin";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 // GET /api/members/[id] - Fetch single member
 export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
     const db = getAdminFirestore();
 
-    const memberDoc = await db.collection('members').doc(id).get();
+    const memberDoc = await db.collection("members").doc(id).get();
 
     if (!memberDoc.exists) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Member not found',
+          error: "Member not found",
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -34,14 +34,14 @@ export async function GET(
       data: member,
     });
   } catch (error) {
-    console.error('Error fetching member:', error);
+    console.error("Error fetching member:", error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to fetch member',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to fetch member",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -49,23 +49,23 @@ export async function GET(
 // PATCH /api/members/[id] - Update member
 export async function PATCH(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
     const body = await request.json();
     const db = getAdminFirestore();
 
-    const memberRef = db.collection('members').doc(id);
+    const memberRef = db.collection("members").doc(id);
     const memberDoc = await memberRef.get();
 
     if (!memberDoc.exists) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Member not found',
+          error: "Member not found",
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -84,40 +84,40 @@ export async function PATCH(
     return NextResponse.json({
       success: true,
       data: updatedMember,
-      message: 'Member updated successfully',
+      message: "Member updated successfully",
     });
   } catch (error) {
-    console.error('Error updating member:', error);
+    console.error("Error updating member:", error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to update member',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to update member",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 // DELETE /api/members/[id] - Delete member
 export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
     const db = getAdminFirestore();
 
-    const memberRef = db.collection('members').doc(id);
+    const memberRef = db.collection("members").doc(id);
     const memberDoc = await memberRef.get();
 
     if (!memberDoc.exists) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Member not found',
+          error: "Member not found",
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -125,17 +125,17 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'Member deleted successfully',
+      message: "Member deleted successfully",
     });
   } catch (error) {
-    console.error('Error deleting member:', error);
+    console.error("Error deleting member:", error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to delete member',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to delete member",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

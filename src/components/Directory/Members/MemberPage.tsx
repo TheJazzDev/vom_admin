@@ -6,9 +6,9 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useMembers } from "@/hooks/useMembers";
 import MemberStatsCard from "./Components/MemberStatsCard";
-import { MemberDataTable } from "./Table/MemberTable";
 import { ExportDialog } from "./ExportDialog";
 import { PrintableView } from "./PrintableView";
+import { MemberDataTable } from "./Table/MemberTable";
 
 const MembersPage = () => {
   const router = useRouter();
@@ -120,8 +120,12 @@ const MembersPage = () => {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <p className="text-red-600 dark:text-red-400 mb-2">Failed to load members</p>
-          <p className="text-gray-600 dark:text-gray-400 text-sm">{error.message}</p>
+          <p className="text-red-600 dark:text-red-400 mb-2">
+            Failed to load members
+          </p>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">
+            {error.message}
+          </p>
         </div>
       </div>
     );
@@ -213,7 +217,10 @@ const MembersPage = () => {
 
       <MemberDataTable data={members || []} />
 
-      <ExportDialog open={exportDialogOpen} onOpenChange={setExportDialogOpen} />
+      <ExportDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+      />
 
       {/* Hidden printable view - only visible when printing */}
       <PrintableView members={members || []} />

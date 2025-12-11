@@ -34,6 +34,7 @@ export default function CreateMemberPage() {
       department: [],
       band: [],
       ministry: [],
+      position: [],
       primaryPhone: "",
       secondaryPhone: "",
       avatar: "",

@@ -71,6 +71,88 @@ export const useEditMember = () => {
   });
 };
 
+// Export members to CSV
+export const useExportMembers = () => {
+  return useMutation({
+    mutationFn: async (filters?: Record<string, any>) => {
+      // Get all members
+      const members = await getAllMembers();
+
+      // Apply filters if provided
+      let filteredMembers = members;
+      if (filters) {
+        if (filters.status) {
+          filteredMembers = filteredMembers.filter(
+            (m) => m.status === filters.status,
+          );
+        }
+        if (filters.band) {
+          filteredMembers = filteredMembers.filter((m) =>
+            m.band?.some((b: any) => b.name === filters.band),
+          );
+        }
+        if (filters.department) {
+          filteredMembers = filteredMembers.filter((m) =>
+            m.department?.some((d: any) => d.name === filters.department),
+          );
+        }
+      }
+
+      // Convert to CSV
+      const headers = [
+        "First Name",
+        "Last Name",
+        "Email",
+        "Phone",
+        "Gender",
+        "Status",
+        "Bands",
+        "Departments",
+        "Date Joined",
+      ];
+
+      const csvRows = [
+        headers.join(","),
+        ...filteredMembers.map((member) =>
+          [
+            member.firstName || "",
+            member.lastName || "",
+            member.email || "",
+            member.phone || "",
+            member.gender || "",
+            member.status || "",
+            member.band?.map((b: any) => b.name).join("; ") || "",
+            member.department?.map((d: any) => d.name).join("; ") || "",
+            member.createdAt
+              ? new Date(member.createdAt).toLocaleDateString()
+              : "",
+          ]
+            .map((field) => `"${field}"`)
+            .join(","),
+        ),
+      ];
+
+      const csvContent = csvRows.join("\n");
+
+      // Create download
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute(
+        "download",
+        `members_export_${new Date().toISOString().split("T")[0]}.csv`,
+      );
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      return filteredMembers;
+    },
+  });
+};
+
 // // Delete member mutation (soft delete)
 // export const useDeleteMember = () => {
 //   const queryClient = useQueryClient();

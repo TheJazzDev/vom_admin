@@ -1,6 +1,6 @@
-import { initializeApp, getApps, cert, type App } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
-import { getFirestore } from 'firebase-admin/firestore';
+import { type App, cert, getApps, initializeApp } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
+import { getFirestore } from "firebase-admin/firestore";
 
 let adminApp: App | undefined;
 
@@ -18,7 +18,7 @@ export function getAdminApp() {
 
   const serviceAccountJson = process.env.FIREBASE_ADMIN_CREDENTIALS;
   if (!serviceAccountJson) {
-    throw new Error('Missing FIREBASE_ADMIN_CREDENTIALS env variable');
+    throw new Error("Missing FIREBASE_ADMIN_CREDENTIALS env variable");
   }
 
   adminApp = initializeApp({

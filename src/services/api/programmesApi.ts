@@ -3,8 +3,8 @@ export interface Programme {
   date: string;
   topic: string;
   time: string;
-  status: 'upcoming' | 'past';
-  type: 'shilo' | 'sunday' | 'vigil';
+  status: "upcoming" | "past";
+  type: "shilo" | "sunday" | "vigil";
   createdAt?: string;
   updatedAt?: string;
 }
@@ -31,86 +31,93 @@ export async function fetchProgrammes(params?: {
 }): Promise<Programme[]> {
   try {
     const queryParams = new URLSearchParams();
-    if (params?.status) queryParams.append('status', params.status);
-    if (params?.type) queryParams.append('type', params.type);
+    if (params?.status) queryParams.append("status", params.status);
+    if (params?.type) queryParams.append("type", params.type);
 
-    const url = `/api/programmes${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const url = `/api/programmes${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
     const response = await fetch(url);
     const data: ProgrammesApiResponse = await response.json();
 
     if (!data.success) {
-      throw new Error(data.error || 'Failed to fetch programmes');
+      throw new Error(data.error || "Failed to fetch programmes");
     }
 
     return data.data || [];
   } catch (error) {
-    console.error('Error fetching programmes:', error);
+    console.error("Error fetching programmes:", error);
     throw error;
   }
 }
 
 // GET /api/programmes/[id] - Fetch single programme
-export async function fetchProgrammeById(id: string): Promise<Programme | null> {
+export async function fetchProgrammeById(
+  id: string,
+): Promise<Programme | null> {
   try {
     const response = await fetch(`/api/programmes/${id}`);
     const data: ProgrammeApiResponse = await response.json();
 
     if (!data.success) {
       if (response.status === 404) return null;
-      throw new Error(data.error || 'Failed to fetch programme');
+      throw new Error(data.error || "Failed to fetch programme");
     }
 
     return data.data || null;
   } catch (error) {
-    console.error('Error fetching programme:', error);
+    console.error("Error fetching programme:", error);
     throw error;
   }
 }
 
 // POST /api/programmes - Create new programme
-export async function createProgrammeApi(programmeData: any): Promise<Programme> {
+export async function createProgrammeApi(
+  programmeData: any,
+): Promise<Programme> {
   try {
-    const response = await fetch('/api/programmes', {
-      method: 'POST',
+    const response = await fetch("/api/programmes", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(programmeData),
     });
 
     const data: ProgrammeApiResponse = await response.json();
 
-    if (!data.success) {
-      throw new Error(data.error || 'Failed to create programme');
+    if (!data.success || !data.data) {
+      throw new Error(data.error || "Failed to create programme");
     }
 
-    return data.data!;
+    return data.data;
   } catch (error) {
-    console.error('Error creating programme:', error);
+    console.error("Error creating programme:", error);
     throw error;
   }
 }
 
 // PATCH /api/programmes/[id] - Update programme
-export async function updateProgrammeApi(id: string, updates: any): Promise<Programme> {
+export async function updateProgrammeApi(
+  id: string,
+  updates: any,
+): Promise<Programme> {
   try {
     const response = await fetch(`/api/programmes/${id}`, {
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(updates),
     });
 
     const data: ProgrammeApiResponse = await response.json();
 
-    if (!data.success) {
-      throw new Error(data.error || 'Failed to update programme');
+    if (!data.success || !data.data) {
+      throw new Error(data.error || "Failed to update programme");
     }
 
-    return data.data!;
+    return data.data;
   } catch (error) {
-    console.error('Error updating programme:', error);
+    console.error("Error updating programme:", error);
     throw error;
   }
 }
@@ -119,16 +126,16 @@ export async function updateProgrammeApi(id: string, updates: any): Promise<Prog
 export async function deleteProgrammeApi(id: string): Promise<void> {
   try {
     const response = await fetch(`/api/programmes/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
 
     const data = await response.json();
 
     if (!data.success) {
-      throw new Error(data.error || 'Failed to delete programme');
+      throw new Error(data.error || "Failed to delete programme");
     }
   } catch (error) {
-    console.error('Error deleting programme:', error);
+    console.error("Error deleting programme:", error);
     throw error;
   }
 }

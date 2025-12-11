@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { CreateProgramme } from "@/components/Programme";
 
 export const metadata = {
@@ -5,5 +6,9 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <CreateProgramme />;
+  return (
+    <Suspense fallback={<div className="p-6">Loading...</div>}>
+      <CreateProgramme />
+    </Suspense>
+  );
 }
