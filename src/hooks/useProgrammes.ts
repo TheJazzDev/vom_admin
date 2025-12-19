@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   getAllProgrammes,
   getCurrentProgrammes,
@@ -101,7 +102,8 @@ export const useRecentProgrammes = (limit = 5) => {
 
 // Save programme - Updated invalidation logic
 export const useSaveProgramme = () => {
-  const userId = "asdfavewacwds"; // TODO: Get from auth
+  const { user } = useAuth();
+  const userId = user?.id || "";
   const router = useRouter();
   const queryClient = useQueryClient();
 

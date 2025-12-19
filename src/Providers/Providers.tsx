@@ -20,11 +20,7 @@ import { SiteHeader } from "@/components/sidebar/site-header";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
-const mutationCache = new MutationCache({
-  onMutate: (variables: any) => {
-    console.log("Global on mutate:", variables);
-  },
-});
+const mutationCache = new MutationCache();
 
 const queryClient = new QueryClient({
   mutationCache,
@@ -32,11 +28,6 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: Infinity,
       retry: false,
-    },
-    mutations: {
-      onSuccess: (data: any) => {
-        console.log("Global mutation success", data);
-      },
     },
   },
 });
@@ -188,7 +179,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
       >
         <AuthProvider>
           <LayoutWrapper>{children}</LayoutWrapper>
-          <ReactQueryDevtools />
+          {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}
           <Toaster position="top-right" richColors />
         </AuthProvider>
       </ThemeProvider>

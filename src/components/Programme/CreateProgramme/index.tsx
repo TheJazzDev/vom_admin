@@ -7,7 +7,6 @@ import VigilProgrammeForm from "./VigilForm";
 
 const CreateProgramme = () => {
   const searchParams = useSearchParams().get("type");
-  console.log(searchParams);
 
   return (
     <div className="mt-6">

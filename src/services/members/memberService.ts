@@ -1,5 +1,4 @@
 import {
-  addDoc,
   collection,
   type DocumentData,
   doc,
@@ -7,6 +6,7 @@ import {
   orderBy,
   type QueryDocumentSnapshot,
   query,
+  setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -77,11 +77,6 @@ export const createMember = async (
       memberData.dob,
     );
 
-    // Extract band keys from band data
-    // const bandKeys = (memberData.band || []).map((b: BandData) =>
-    //   typeof b.name === 'string' ? b.name.replace(/^"|"$/g, '') : b.name
-    // );
-
     // Extract department keys from department data
     const departmentKeys = (memberData.department || []).map(
       (d: Department) => d.name,
@@ -134,7 +129,9 @@ export const createMember = async (
     };
 
     // Add to Firestore
-    const docRef = await addDoc(collection(db, "members", memberId), newMember);
+    const docRef = doc(db, "members", memberId);
+    await setDoc(docRef, newMember);
+    // const docRef = await addDoc(collection(db, "members", memberId), newMember);
 
     return docRef.id;
   } catch (error) {
@@ -164,11 +161,10 @@ export const updateMember = async (
 
     // Update department keys if departments are being updated
     if ("department" in updates && updates.department) {
-      updatePayload.bandKeys = (updates.department as DepartmentData[]).map(
+      updatePayload.departmentKeys = (updates.department as DepartmentData[]).map(
         (d) =>
           typeof d.name === "string" ? d.name.replace(/^"|"$/g, "") : d.name,
       );
-      // updatePayload.departmentKeys = updates.department.map((d) => d.name);
     }
 
     await updateDoc(memberDocRef, updatePayload);

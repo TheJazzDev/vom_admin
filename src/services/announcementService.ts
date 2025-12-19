@@ -11,11 +11,6 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import type {
-  Announcement,
-  CreateAnnouncementInput,
-  UpdateAnnouncementInput,
-} from "@/@types/announcement";
 import { announcementsRef } from "@/config/collectionRefs";
 import { db } from "@/config/firebase";
 

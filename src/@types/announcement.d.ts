@@ -27,3 +27,5 @@ declare global {
     id: string;
   };
 }
+
+export {};

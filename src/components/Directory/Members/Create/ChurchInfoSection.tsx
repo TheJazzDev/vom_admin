@@ -52,11 +52,7 @@ export function ChurchInfoSection({ form }: ChurchInfoSectionProps) {
               </FormItem>
             )}
           />
-          <HybridMultiSelectField
-            name="position"
-            control={form.control}
-            label="Position"
-          />
+          <HybridMultiSelectField name="position" control={form.control} />
           <HybridMultiSelectField name="ministry" control={form.control} />
           <DepartmentSelectField control={form.control} />
           <BandSelectField control={form.control} />
