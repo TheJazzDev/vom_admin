@@ -1,10 +1,11 @@
 import { doc, setDoc, writeBatch } from "firebase/firestore";
-import { db } from "@/config/firebase";
+import { getFirebaseDb } from "@/config/firebase";
 import { BANDS_CONFIG } from "@/constants/directory/BANDS_CONFIG";
 import { DEPARTMENTS_CONFIG } from "@/constants/directory/DEPARTMENTS_CONFIG";
 import { BandKeysEnum } from "@/enums";
 
 export async function initializeBandsCollection() {
+  const db = getFirebaseDb();
   const batch = writeBatch(db);
 
   Object.values(BANDS_CONFIG).forEach((band) => {
@@ -40,6 +41,7 @@ export async function initializeBandsCollection() {
 
 // Initialize Departments Collection
 export async function initializeDepartmentsCollection() {
+  const db = getFirebaseDb();
   const batch = writeBatch(db);
 
   Object.values(DEPARTMENTS_CONFIG).forEach((dept) => {
@@ -68,6 +70,7 @@ export async function updateBandLeadership(
   leader2?: string,
   secretary?: string,
 ) {
+  const db = getFirebaseDb();
   const bandRef = doc(db, "bands", bandId);
   const updateData: any = { leadership: {} };
 
@@ -91,6 +94,7 @@ export async function updateDepartmentLeadership(
   assistant?: string,
   secretary?: string,
 ) {
+  const db = getFirebaseDb();
   const deptRef = doc(db, "departments", deptId);
   const updateData: any = { leadership: {} };
 

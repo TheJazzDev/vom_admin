@@ -1,5 +1,4 @@
 import {
-  collection,
   type DocumentData,
   doc,
   getDocs,
@@ -16,7 +15,8 @@ import {
   ref,
   uploadBytes,
 } from "firebase/storage";
-import { db, storage } from "@/config/firebase";
+import { getMembersRef } from "@/config/collectionRefs";
+import { getFirebaseDb, getFirebaseStorage } from "@/config/firebase";
 import { BandKeysEnum } from "@/enums";
 import { generateMemberId } from "./utils";
 
@@ -38,10 +38,9 @@ export function transformFirestoreDoc(
   };
 }
 
-const membersRef = collection(db, "members");
-
 export const getAllMembers = async (): Promise<UserProfile[]> => {
   try {
+    const membersRef = getMembersRef();
     const q = query(membersRef, orderBy("createdAt", "desc"));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(transformFirestoreDoc);
@@ -55,6 +54,7 @@ export const getMemberById = async (
   id: string,
 ): Promise<QueryDocumentSnapshot<DocumentData> | null> => {
   try {
+    const membersRef = getMembersRef();
     const memberDoc = await getDocs(
       query(membersRef, where("__name__", "==", id)),
     );
@@ -70,6 +70,8 @@ export const createMember = async (
   memberData: CreateMemberData,
 ): Promise<string> => {
   try {
+    const db = getFirebaseDb();
+
     // Generate unique member ID
     const memberId = generateMemberId(
       memberData.firstName,
@@ -131,7 +133,6 @@ export const createMember = async (
     // Add to Firestore
     const docRef = doc(db, "members", memberId);
     await setDoc(docRef, newMember);
-    // const docRef = await addDoc(collection(db, "members", memberId), newMember);
 
     return docRef.id;
   } catch (error) {
@@ -145,6 +146,7 @@ export const updateMember = async (
   updates: UpdateMemberData,
 ): Promise<void> => {
   try {
+    const db = getFirebaseDb();
     const memberDocRef = doc(db, "members", id);
 
     const updatePayload: Record<string, any> = {
@@ -161,9 +163,10 @@ export const updateMember = async (
 
     // Update department keys if departments are being updated
     if ("department" in updates && updates.department) {
-      updatePayload.departmentKeys = (updates.department as DepartmentData[]).map(
-        (d) =>
-          typeof d.name === "string" ? d.name.replace(/^"|"$/g, "") : d.name,
+      updatePayload.departmentKeys = (
+        updates.department as DepartmentData[]
+      ).map((d) =>
+        typeof d.name === "string" ? d.name.replace(/^"|"$/g, "") : d.name,
       );
     }
 
@@ -179,6 +182,7 @@ export async function uploadMemberAvatar(
   memberId?: string,
 ): Promise<string> {
   try {
+    const storage = getFirebaseStorage();
     const timestamp = Date.now();
     const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
     const fileName = memberId
@@ -202,6 +206,7 @@ export async function deleteMemberAvatar(avatarUrl: string): Promise<void> {
   try {
     if (!avatarUrl) return;
 
+    const storage = getFirebaseStorage();
     const urlObj = new URL(avatarUrl);
     const pathMatch = urlObj.pathname.match(/\/o\/(.+)\?/);
 

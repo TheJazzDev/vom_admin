@@ -1,5 +1,5 @@
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
-import { db } from "@/config";
+import { getFirebaseDb } from "@/config/firebase";
 
 interface BandSummary {
   memberCount: number;
@@ -67,13 +67,14 @@ export async function updateBandStatistics(): Promise<{
   };
 
   try {
+    const db = getFirebaseDb();
     console.log("Starting band statistics update...");
 
     // Get all members
     const membersSnapshot = await getDocs(collection(db, "members"));
-    const members = membersSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
+    const members = membersSnapshot.docs.map((docSnap) => ({
+      id: docSnap.id,
+      ...docSnap.data(),
     })) as UserProfile[];
 
     console.log(`Processing ${members.length} members for band statistics...`);
@@ -128,6 +129,7 @@ export async function updateBandStatistics(): Promise<{
 
 async function updateEmptyBands(bandMemberMap: Map<string, UserProfile[]>) {
   try {
+    const db = getFirebaseDb();
     const bandsSnapshot = await getDocs(collection(db, "bands"));
 
     for (const bandDoc of bandsSnapshot.docs) {

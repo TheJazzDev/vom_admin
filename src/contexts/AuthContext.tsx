@@ -8,7 +8,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { auth } from "@/config/firebase";
+import { getFirebaseAuth } from "@/config/firebase";
 
 interface AuthContextType {
   user: UserProfile | null;
@@ -51,22 +51,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Listen to Firebase auth state changes
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
-      setFirebaseUser(firebaseUser);
-      if (firebaseUser) {
-        await checkSession();
-      } else {
-        setUser(null);
-        setLoading(false);
-      }
-    });
+    let unsubscribe: (() => void) | undefined;
 
-    return () => unsubscribe();
+    try {
+      const auth = getFirebaseAuth();
+      unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
+        setFirebaseUser(firebaseUser);
+        if (firebaseUser) {
+          await checkSession();
+        } else {
+          setUser(null);
+          setLoading(false);
+        }
+      });
+    } catch (error) {
+      // Firebase not configured, just check session
+      console.warn("Firebase Auth not configured:", error);
+      setLoading(false);
+    }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, [checkSession]);
 
   const login = async (email: string, password: string) => {
     try {
       setLoading(true);
+      const auth = getFirebaseAuth();
 
       // Sign in with Firebase
       const userCredential = await signInWithEmailAndPassword(
@@ -110,7 +124,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       // Sign out from Firebase
-      await signOut(auth);
+      try {
+        const auth = getFirebaseAuth();
+        await signOut(auth);
+      } catch (_error) {
+        // Firebase not configured, ignore
+      }
 
       setUser(null);
       setFirebaseUser(null);

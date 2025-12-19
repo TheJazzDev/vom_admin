@@ -1,10 +1,33 @@
-import { collection } from "firebase/firestore";
-import { db } from "./firebase";
+import { type CollectionReference, collection } from "firebase/firestore";
+import { getFirebaseDb } from "./firebase";
 
-export const bandsRef = collection(db, "bands");
-export const guestRef = collection(db, "guests");
-export const membersRef = collection(db, "members");
-export const childrenRef = collection(db, "children");
-export const programmesRef = collection(db, "programmes");
-export const notificationRef = collection(db, "notifications");
-export const announcementsRef = collection(db, "announcements");
+// Lazy getters for collection references
+// These only access db when called, allowing build to succeed without config
+
+export function getBandsRef(): CollectionReference {
+  return collection(getFirebaseDb(), "bands");
+}
+
+export function getGuestRef(): CollectionReference {
+  return collection(getFirebaseDb(), "guests");
+}
+
+export function getMembersRef(): CollectionReference {
+  return collection(getFirebaseDb(), "members");
+}
+
+export function getChildrenRef(): CollectionReference {
+  return collection(getFirebaseDb(), "children");
+}
+
+export function getProgrammesRef(): CollectionReference {
+  return collection(getFirebaseDb(), "programmes");
+}
+
+export function getNotificationRef(): CollectionReference {
+  return collection(getFirebaseDb(), "notifications");
+}
+
+export function getAnnouncementsRef(): CollectionReference {
+  return collection(getFirebaseDb(), "announcements");
+}

@@ -4,7 +4,13 @@ import type { LucideIcon } from "lucide-react";
 import { ChevronLeft, ChevronRight, Home, LogOut, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { createContext, type ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
@@ -67,9 +73,55 @@ export function SimpleSidebarProvider({ children }: { children: ReactNode }) {
 export function SimpleSidebar({ navItems }: SimpleSidebarProps) {
   const { isCollapsed, toggleSidebar, isMobileOpen, setIsMobileOpen } =
     useSidebarContext();
-  const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const pathname = usePathname();
   const { user, logout } = useAuth();
+
+  // Check if a URL is active (exact match or starts with for nested routes)
+  const isActiveLink = (url: string) => {
+    if (url === "/") return pathname === "/";
+    return pathname === url || pathname.startsWith(`${url}/`);
+  };
+
+  // Check if a section has any active child
+  const isSectionActive = (item: NavItem) => {
+    if (pathname === item.url) return true;
+    if (item.items) {
+      return item.items.some(
+        (subItem) =>
+          pathname === subItem.url || pathname.startsWith(`${subItem.url}/`),
+      );
+    }
+    return pathname.startsWith(`${item.url}/`);
+  };
+
+  // Get default expanded items based on current path
+  const getDefaultExpandedItems = (): string[] => {
+    return navItems
+      .filter((item) => item.items && isSectionActive(item))
+      .map((item) => item.title);
+  };
+
+  const [expandedItems, setExpandedItems] = useState<string[]>(() =>
+    getDefaultExpandedItems(),
+  );
+
+  // Update expanded items when pathname changes
+  useEffect(() => {
+    const activeItems = navItems
+      .filter((item) => {
+        if (!item.items) return false;
+        if (pathname === item.url) return true;
+        return item.items.some(
+          (subItem) =>
+            pathname === subItem.url || pathname.startsWith(`${subItem.url}/`),
+        );
+      })
+      .map((item) => item.title);
+
+    if (activeItems.length > 0) {
+      setExpandedItems((prev) => [...new Set([...prev, ...activeItems])]);
+    }
+  }, [pathname, navItems]);
 
   const toggleItem = (title: string) => {
     setExpandedItems((prev) =>
@@ -78,8 +130,6 @@ export function SimpleSidebar({ navItems }: SimpleSidebarProps) {
         : [...prev, title],
     );
   };
-
-  const isActiveLink = (url: string) => pathname === url;
 
   const getUserInitials = (name?: string) => {
     if (!name) return "U";
@@ -146,7 +196,7 @@ export function SimpleSidebar({ navItems }: SimpleSidebarProps) {
             href="/"
             className={cn(
               "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors",
-              isActiveLink("/") && pathname === "/"
+              pathname === "/"
                 ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
                 : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800",
             )}
@@ -167,7 +217,7 @@ export function SimpleSidebar({ navItems }: SimpleSidebarProps) {
                     onClick={() => !isCollapsed && toggleItem(item.title)}
                     className={cn(
                       "w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg transition-colors",
-                      isActiveLink(item.url)
+                      isSectionActive(item)
                         ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
                         : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800",
                     )}

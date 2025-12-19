@@ -1,15 +1,17 @@
 import { doc, getDoc, getDocs, query, where } from "firebase/firestore";
-import { bandsRef, db, membersRef } from "@/config";
+import { getBandsRef, getMembersRef } from "@/config/collectionRefs";
+import { getFirebaseDb } from "@/config/firebase";
 
 export const getAllBands = async (): Promise<Band[]> => {
   try {
+    const bandsRef = getBandsRef();
     const bandsSnapshot = await getDocs(bandsRef);
 
     return bandsSnapshot.docs.map(
-      (doc) =>
+      (docSnap) =>
         ({
-          id: doc.id,
-          ...doc.data(),
+          id: docSnap.id,
+          ...docSnap.data(),
         }) as Band,
     );
   } catch (error) {
@@ -20,6 +22,7 @@ export const getAllBands = async (): Promise<Band[]> => {
 
 export const getBandById = async (bandId: string): Promise<Band | null> => {
   try {
+    const db = getFirebaseDb();
     const bandDoc = await getDoc(doc(db, "bands", bandId));
 
     if (!bandDoc.exists()) {
@@ -44,6 +47,7 @@ export const getBandWithMembers = async (
 
     if (!band) return null;
 
+    const membersRef = getMembersRef();
     let members: UserProfile[] = [];
 
     if (band.id === "UNASSIGNED") {
@@ -54,10 +58,10 @@ export const getBandWithMembers = async (
       );
       const unassignedSnapshot = await getDocs(unassignedQuery);
       members = unassignedSnapshot.docs.map(
-        (doc) =>
+        (docSnap) =>
           ({
-            id: doc.id,
-            ...doc.data(),
+            id: docSnap.id,
+            ...docSnap.data(),
           }) as UserProfile,
       );
     } else {
@@ -69,10 +73,10 @@ export const getBandWithMembers = async (
       const membersSnapshot = await getDocs(membersQuery);
 
       members = membersSnapshot.docs.map(
-        (doc) =>
+        (docSnap) =>
           ({
-            id: doc.id,
-            ...doc.data(),
+            id: docSnap.id,
+            ...docSnap.data(),
           }) as UserProfile,
       );
     }

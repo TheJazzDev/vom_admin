@@ -9,7 +9,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { programmesRef } from "@/config";
+import { getProgrammesRef } from "@/config/collectionRefs";
 
 export interface ProgrammeStats {
   total: number;
@@ -24,6 +24,7 @@ export const getProgrammeById = async (
   id: string,
 ): Promise<ProgrammeFormData> => {
   try {
+    const programmesRef = getProgrammesRef();
     const docRef = doc(programmesRef, id);
     const docSnap = await getDoc(docRef);
 
@@ -46,6 +47,7 @@ export const saveProgramme = async (
   userId: string,
 ): Promise<string> => {
   const now = new Date().toISOString();
+  const programmesRef = getProgrammesRef();
 
   const data = {
     ...programmeData,
@@ -69,6 +71,7 @@ export const updateProgramme = async (
   programmeData: Partial<ProgrammeFormData>,
 ): Promise<void> => {
   const now = new Date().toISOString();
+  const programmesRef = getProgrammesRef();
 
   const updateData = {
     ...programmeData,
@@ -90,6 +93,7 @@ export const updateProgramme = async (
 // Get programme statistics - single query approach
 export const getProgrammeStats = async (): Promise<ProgrammeStats> => {
   try {
+    const programmesRef = getProgrammesRef();
     const snapshot = await getDocs(programmesRef);
 
     const now = new Date();
@@ -154,6 +158,7 @@ export const getRecentProgrammes = async (
   limitCount: number = 5,
 ): Promise<ProgrammeFormData[]> => {
   try {
+    const programmesRef = getProgrammesRef();
     const q = query(
       programmesRef,
       orderBy("createdAt", "desc"),
@@ -174,6 +179,7 @@ export const getRecentProgrammes = async (
 export const getPublishedProgrammes = async (): Promise<
   ProgrammeFormData[]
 > => {
+  const programmesRef = getProgrammesRef();
   const q = query(
     programmesRef,
     where("status", "==", "published"),
@@ -188,6 +194,7 @@ export const getPublishedProgrammes = async (): Promise<
 
 // Get upcoming programmes
 export const getUpcomingProgrammes = async (): Promise<ProgrammeFormData[]> => {
+  const programmesRef = getProgrammesRef();
   const now = new Date().toISOString();
   const q = query(
     programmesRef,
@@ -204,11 +211,8 @@ export const getUpcomingProgrammes = async (): Promise<ProgrammeFormData[]> => {
 
 // Get draft programmes
 export const getDraftProgrammes = async (): Promise<ProgrammeFormData[]> => {
-  const q = query(
-    programmesRef,
-    where("status", "==", "draft"),
-    // orderBy('date', 'asc')
-  );
+  const programmesRef = getProgrammesRef();
+  const q = query(programmesRef, where("status", "==", "draft"));
   const snapshot = await getDocs(q);
   return snapshot.docs.map((doc) => ({
     id: doc.id,
@@ -218,6 +222,7 @@ export const getDraftProgrammes = async (): Promise<ProgrammeFormData[]> => {
 
 // Get past programmes
 export const getPastProgrammes = async (): Promise<ProgrammeFormData[]> => {
+  const programmesRef = getProgrammesRef();
   const now = new Date().toISOString();
   const q = query(
     programmesRef,
@@ -236,6 +241,7 @@ export const getPastProgrammes = async (): Promise<ProgrammeFormData[]> => {
 
 // Get current programmes (today)
 export const getCurrentProgrammes = async (): Promise<ProgrammeFormData[]> => {
+  const programmesRef = getProgrammesRef();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const tomorrow = new Date(today);
@@ -256,6 +262,7 @@ export const getCurrentProgrammes = async (): Promise<ProgrammeFormData[]> => {
 
 // Get all programmes
 export const getAllProgrammes = async (): Promise<ProgrammeFormData[]> => {
+  const programmesRef = getProgrammesRef();
   const snapshot = await getDocs(programmesRef);
   return snapshot.docs.map((doc) => ({
     id: doc.id,

@@ -1,7 +1,7 @@
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { type FirebaseApp, getApps, initializeApp } from "firebase/app";
+import { type Auth, getAuth } from "firebase/auth";
+import { type Firestore, getFirestore } from "firebase/firestore";
+import { type FirebaseStorage, getStorage } from "firebase/storage";
 
 // Your Firebase configuration
 const firebaseConfig = {
@@ -14,13 +14,53 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Check if we have valid config (not empty strings)
+const hasValidConfig = firebaseConfig.apiKey && firebaseConfig.projectId;
 
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
+// Initialize Firebase only if config is valid
+let app: FirebaseApp | undefined;
+let auth: Auth | undefined;
+let db: Firestore | undefined;
+let storage: FirebaseStorage | undefined;
 
+if (hasValidConfig) {
+  // Check if already initialized
+  app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+  storage = getStorage(app);
+}
+
+// Export getters that throw helpful errors when Firebase isn't configured
+function getFirebaseAuth(): Auth {
+  if (!auth) {
+    throw new Error(
+      "Firebase Auth is not initialized. Please configure NEXT_PUBLIC_FIREBASE_* environment variables.",
+    );
+  }
+  return auth;
+}
+
+function getFirebaseDb(): Firestore {
+  if (!db) {
+    throw new Error(
+      "Firebase Firestore is not initialized. Please configure NEXT_PUBLIC_FIREBASE_* environment variables.",
+    );
+  }
+  return db;
+}
+
+function getFirebaseStorage(): FirebaseStorage {
+  if (!storage) {
+    throw new Error(
+      "Firebase Storage is not initialized. Please configure NEXT_PUBLIC_FIREBASE_* environment variables.",
+    );
+  }
+  return storage;
+}
+
+// Export with backwards compatibility
 export { auth, db, storage };
+export { getFirebaseAuth, getFirebaseDb, getFirebaseStorage };
 
 export default app;

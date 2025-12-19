@@ -1,6 +1,6 @@
 import { doc, getDoc, getDocs, setDoc } from "firebase/firestore";
-import { membersRef } from "@/config";
-import { db } from "@/config/firebase";
+import { getMembersRef } from "@/config/collectionRefs";
+import { getFirebaseDb } from "@/config/firebase";
 
 export async function findExistingMemberByName(
   firstName: string,
@@ -8,16 +8,17 @@ export async function findExistingMemberByName(
   primaryPhone: string,
 ): Promise<string | null> {
   try {
+    const membersRef = getMembersRef();
     const snapshot = await getDocs(membersRef);
 
-    for (const doc of snapshot.docs) {
-      const member = doc.data();
+    for (const docSnap of snapshot.docs) {
+      const member = docSnap.data();
       if (
         member.firstName?.toLowerCase() === firstName.toLowerCase() &&
         member.lastName?.toLowerCase() === lastName.toLowerCase() &&
         member.primaryPhone === primaryPhone
       ) {
-        return doc.id;
+        return docSnap.id;
       }
     }
     return null;
@@ -32,6 +33,7 @@ export async function findExistingMemberById(
   memberId: string,
 ): Promise<boolean> {
   try {
+    const db = getFirebaseDb();
     const docRef = doc(db, "members", memberId);
     const docSnap = await getDoc(docRef);
     return docSnap.exists();
@@ -49,6 +51,7 @@ export async function syncMemberToFirebase(
   memberId: string;
 }> {
   try {
+    const db = getFirebaseDb();
     // Check if member already exists by ID
     const memberExists = await findExistingMemberById(newMemberData.id);
 

@@ -1,8 +1,9 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { db } from "@/config/firebase";
+import { getFirebaseDb } from "@/config/firebase";
 
 export async function findExistingChildById(childId: string): Promise<boolean> {
   try {
+    const db = getFirebaseDb();
     const docRef = doc(db, "children", childId);
     const docSnap = await getDoc(docRef);
     return docSnap.exists();
@@ -19,6 +20,7 @@ export async function syncChildToFirebase(childData: ChildrenProfile): Promise<{
   childId: string;
 }> {
   try {
+    const db = getFirebaseDb();
     const childExists = await findExistingChildById(childData.id);
 
     if (childExists) {

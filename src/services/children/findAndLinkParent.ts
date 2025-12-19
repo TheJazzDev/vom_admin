@@ -1,11 +1,13 @@
 import { getDocs, query, where } from "firebase/firestore";
-import { membersRef } from "@/config";
+import { getMembersRef } from "@/config/collectionRefs";
 import { formatPhoneNumber } from "./utils";
 
 async function findParentByPhone(phone: string): Promise<string | null> {
   try {
     const formattedPhone = formatPhoneNumber(phone);
     if (!formattedPhone) return null;
+
+    const membersRef = getMembersRef();
 
     // Try primary phone first
     const primaryQuery = query(

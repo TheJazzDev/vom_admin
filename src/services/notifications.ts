@@ -1,5 +1,5 @@
 import { addDoc, serverTimestamp } from "firebase/firestore";
-import { notificationRef } from "@/config";
+import { getNotificationRef } from "@/config/collectionRefs";
 
 export async function sendNotification({
   title,
@@ -15,6 +15,7 @@ export async function sendNotification({
   userIds?: string[];
 }) {
   try {
+    const notificationRef = getNotificationRef();
     if (userIds.length === 0) {
       // global notification
       await addDoc(notificationRef, {

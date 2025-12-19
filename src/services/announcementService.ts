@@ -11,16 +11,16 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { announcementsRef } from "@/config/collectionRefs";
-import { db } from "@/config/firebase";
+import { getAnnouncementsRef } from "@/config/collectionRefs";
+import { getFirebaseDb } from "@/config/firebase";
 
 /**
  * Transform Firestore document to Announcement type
  */
-export function transformAnnouncementDoc(doc: any): Announcement {
-  const data = doc.data();
+export function transformAnnouncementDoc(docSnap: any): Announcement {
+  const data = docSnap.data();
   return {
-    id: doc.id,
+    id: docSnap.id,
     title: data.title,
     content: data.content,
     type: data.type,
@@ -46,6 +46,7 @@ export async function createAnnouncement(
   input: CreateAnnouncementInput,
 ): Promise<string> {
   try {
+    const announcementsRef = getAnnouncementsRef();
     const docRef = await addDoc(announcementsRef, {
       ...input,
       createdAt: serverTimestamp(),
@@ -67,6 +68,7 @@ export async function getAnnouncements(filters?: {
   isActive?: boolean;
 }): Promise<Announcement[]> {
   try {
+    const announcementsRef = getAnnouncementsRef();
     const constraints: QueryConstraint[] = [orderBy("createdAt", "desc")];
 
     if (filters?.type) {
@@ -96,6 +98,7 @@ export async function getAnnouncementById(
   id: string,
 ): Promise<Announcement | null> {
   try {
+    const db = getFirebaseDb();
     const docRef = doc(db, "announcements", id);
     const docSnap = await getDoc(docRef);
 
@@ -117,6 +120,7 @@ export async function updateAnnouncement(
   input: UpdateAnnouncementInput,
 ): Promise<void> {
   try {
+    const db = getFirebaseDb();
     const { id, ...updateData } = input;
     const docRef = doc(db, "announcements", id);
 
@@ -138,6 +142,7 @@ export async function deleteAnnouncement(
   hardDelete = false,
 ): Promise<void> {
   try {
+    const db = getFirebaseDb();
     const docRef = doc(db, "announcements", id);
 
     if (hardDelete) {
@@ -159,6 +164,7 @@ export async function deleteAnnouncement(
  */
 export async function getActiveAnnouncements(): Promise<Announcement[]> {
   try {
+    const announcementsRef = getAnnouncementsRef();
     const q = query(
       announcementsRef,
       where("isActive", "==", true),

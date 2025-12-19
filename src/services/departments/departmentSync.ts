@@ -1,5 +1,5 @@
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
-import { db } from "@/config";
+import { getFirebaseDb } from "@/config/firebase";
 
 interface DepartmentSummary {
   memberCount: number;
@@ -10,7 +10,7 @@ interface DepartmentSummary {
   };
 }
 
-interface UserProfile {
+interface DepartmentUserProfile {
   id: string;
   title?: string;
   firstName: string;
@@ -22,7 +22,7 @@ interface UserProfile {
 }
 
 function calculateDepartmentSummary(
-  members: UserProfile[],
+  members: DepartmentUserProfile[],
   departmentKey: string,
 ): DepartmentSummary {
   const leadership: DepartmentSummary["leadership"] = {};
@@ -69,13 +69,14 @@ export async function updateDepartmentStatistics(): Promise<{
   } = { success: true, departmentsUpdated: 0, errors: [] };
 
   try {
+    const db = getFirebaseDb();
     console.log("Starting department statistics update...");
 
     const membersSnapshot = await getDocs(collection(db, "members"));
-    const members = membersSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as UserProfile[];
+    const members = membersSnapshot.docs.map((docSnap) => ({
+      id: docSnap.id,
+      ...docSnap.data(),
+    })) as DepartmentUserProfile[];
 
     console.log(
       `Processing ${members.length} members for department statistics...`,
@@ -93,7 +94,7 @@ export async function updateDepartmentStatistics(): Promise<{
       })),
     );
 
-    const departmentMemberMap = new Map<string, UserProfile[]>();
+    const departmentMemberMap = new Map<string, DepartmentUserProfile[]>();
 
     members.forEach((member) => {
       if (member.department && member.department.length > 0) {
@@ -143,9 +144,10 @@ export async function updateDepartmentStatistics(): Promise<{
 }
 
 async function updateEmptyDepartments(
-  departmentMemberMap: Map<string, UserProfile[]>,
+  departmentMemberMap: Map<string, DepartmentUserProfile[]>,
 ) {
   try {
+    const db = getFirebaseDb();
     const departmentsSnapshot = await getDocs(collection(db, "departments"));
 
     for (const departmentDoc of departmentsSnapshot.docs) {
