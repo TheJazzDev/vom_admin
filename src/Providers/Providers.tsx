@@ -17,7 +17,7 @@ import {
   useSidebarContext,
 } from "@/components/sidebar/SimpleSidebar";
 import { SiteHeader } from "@/components/sidebar/site-header";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 const mutationCache = new MutationCache();
@@ -155,6 +155,19 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isLoginPage = pathname === "/login";
+  const { loading } = useAuth();
+
+  // Show loading spinner while checking authentication
+  if (loading && !isLoginPage) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 mx-auto" />
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoginPage) {
     return <>{children}</>;

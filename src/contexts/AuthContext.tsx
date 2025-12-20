@@ -133,6 +133,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setUser(null);
       setFirebaseUser(null);
+
+      // Redirect to login page
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
     } catch (error) {
       console.error("Logout error:", error);
       throw error;
