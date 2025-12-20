@@ -94,7 +94,8 @@ export function AvatarUploadSection({ form }: AvatarUploadSectionProps) {
                       <Image
                         src={previewUrl || avatarUrl}
                         alt="Avatar preview"
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
                       />
                       <button
                         type="button"
