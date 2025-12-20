@@ -28,11 +28,15 @@ export async function GET() {
       true,
     );
 
-    // Get user data from Firestore
+    // Get user data from Firestore by querying the uid field
     const db = getAdminFirestore();
-    const userDoc = await db.collection("members").doc(decodedClaims.uid).get();
+    const snapshot = await db
+      .collection("members")
+      .where("uid", "==", decodedClaims.uid)
+      .limit(1)
+      .get();
 
-    if (!userDoc.exists) {
+    if (snapshot.empty) {
       return NextResponse.json(
         {
           success: false,
@@ -42,6 +46,7 @@ export async function GET() {
       );
     }
 
+    const userDoc = snapshot.docs[0];
     const userData = userDoc.data();
 
     return NextResponse.json({
