@@ -14,7 +14,7 @@ import {
 import { DepartmentKeysEnum } from "@/enums";
 
 interface DepartmentSelectFieldProps {
-  control: Control<CreateMemberData>;
+  control: Control<CreateMemberData | MemberEditForm>;
   disabled?: boolean;
   required?: boolean;
 }

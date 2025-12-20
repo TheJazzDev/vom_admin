@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BandSelectField } from "../Components/BandSelectField";
+import { DepartmentSelectField } from "../Components/DepartmentSelectField";
 import { HybridMultiSelectField } from "../Components/HybridMultiSelectField";
 
 const ChurchInformation = ({
@@ -23,7 +24,7 @@ const ChurchInformation = ({
       </Label>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
-        <HybridMultiSelectField control={control} name="department" />
+        <DepartmentSelectField control={control} />
         <HybridMultiSelectField control={control} name="ministry" />
         <FormField
           control={control}

@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconLoader2 } from "@tabler/icons-react";
 import { CheckIcon, CopyIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ import type { BandRoleEnum } from "@/enums/bands";
 import { useEditMember } from "@/hooks/useMembers";
 import { memberEditSchema } from "../Schemas/memberEditSchema";
 import AccountControls from "./AccountControls";
+import { AvatarSection } from "./AvatarSection";
 import BasicInformation from "./BasicInformation";
 import ChurchInformation from "./ChurchInformation";
 import PersonalDetails from "./PersonalDetails";
@@ -68,6 +69,7 @@ export function EditMemberForm({
     ministry: Array.isArray(item.ministry) ? item.ministry : [],
     primaryPhone: item.primaryPhone || "",
     secondaryPhone: item.secondaryPhone || "",
+    avatar: item.avatar || "",
     authType: item.authType || "email",
     status: item.status || "active",
     verified: item.verified ?? false,
@@ -86,6 +88,46 @@ export function EditMemberForm({
   const { isDirty, isValid } = form.formState;
   const editMemberMutation = useEditMember();
   const isSuperAdmin = currentUserRole === "super_admin";
+
+  // Reset form with new values when item changes or drawer opens
+  useEffect(() => {
+    if (isOpen) {
+      const values: MemberEditForm = {
+        firstName: item.firstName || "",
+        middleName: item.middleName || "",
+        lastName: item.lastName || "",
+        email: item.email || "",
+        title: item.title || "",
+        position: Array.isArray(item.position) ? item.position : [],
+        address: item.address || "",
+        gender: item.gender || "male",
+        dob: item.dob || "",
+        occupation: item.occupation || "",
+        maritalStatus: item.maritalStatus || "",
+        department: Array.isArray(item.department) ? item.department : [],
+        band: Array.isArray(item.band)
+          ? (item.band.filter(
+              (band: BandRoleEnum) =>
+                band &&
+                typeof band === "object" &&
+                "name" in band &&
+                "role" in band,
+            ) as { name: BandKeys; role: BandRoleEnum }[])
+          : [],
+        ministry: Array.isArray(item.ministry) ? item.ministry : [],
+        primaryPhone: item.primaryPhone || "",
+        secondaryPhone: item.secondaryPhone || "",
+        avatar: item.avatar || "",
+        authType: item.authType || "email",
+        status: item.status || "active",
+        verified: item.verified ?? false,
+        emailVerified: item.emailVerified ?? false,
+        phoneVerified: item.phoneVerified ?? false,
+        joinDate: item.joinDate ?? "",
+      };
+      form.reset(values);
+    }
+  }, [isOpen, item, form]);
 
   const onSubmit = async (data: MemberEditForm) => {
     await editMemberMutation.mutateAsync(
@@ -150,6 +192,12 @@ export function EditMemberForm({
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-6"
             >
+              <AvatarSection
+                control={form.control}
+                memberId={item.id}
+                currentAvatarUrl={item.avatar}
+              />
+              <Separator />
               <BasicInformation control={form.control} />
               <Separator />
               <PersonalDetails control={form.control} />

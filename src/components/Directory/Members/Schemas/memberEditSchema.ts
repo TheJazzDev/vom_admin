@@ -12,10 +12,17 @@ export const memberEditSchema = z.object({
   firstName: z.string().min(3, "First name is required"),
   middleName: z
     .string()
-    .min(3, "Middle Name cannot be less then 3 characters")
+    .refine((val) => !val || val.length >= 3, {
+      message: "Middle Name cannot be less than 3 characters",
+    })
     .optional(),
   lastName: z.string().min(3, "Last name is required"),
-  email: z.email("Invalid email address").optional(),
+  email: z
+    .string()
+    .refine((val) => !val || z.string().email().safeParse(val).success, {
+      message: "Invalid email address",
+    })
+    .optional(),
   title: z.string().min(1, "Title is required"),
   position: z.array(z.string()).optional(),
   address: z.string().min(1, "Address is required"),
@@ -29,6 +36,7 @@ export const memberEditSchema = z.object({
   ministry: z.array(ministrySchema).optional(),
   primaryPhone: z.string().min(1, "Primary phone is required"),
   secondaryPhone: z.string().optional(),
+  avatar: z.string().optional(),
   // Super admin only fields
   authType: z.enum(["email", "phone"]),
   status: z.enum(["active", "inactive"]).optional(),

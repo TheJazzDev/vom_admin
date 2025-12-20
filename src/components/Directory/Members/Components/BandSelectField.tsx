@@ -17,7 +17,7 @@ import {
 import { BandKeysEnum } from "@/enums";
 
 interface BandSelectFieldProps {
-  control: Control<CreateMemberData>;
+  control: Control<CreateMemberData | MemberEditForm>;
   disabled?: boolean;
   required?: boolean;
 }
