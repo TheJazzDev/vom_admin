@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDistanceToNow } from "date-fns";
 import {
   Activity,
   Baby,
@@ -12,6 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,45 +22,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-export const metadata = {
-  title: "VOM - Directory",
-};
-
-// Mock data for demonstration
-const directoryStats = {
-  members: { total: 342, active: 298, pending: 12, inactive: 32 },
-  bands: { total: 8, active: 6, upcoming: 2 },
-  children: { total: 156, active: 142, newborns: 8 },
-  departments: { total: 12, active: 11, vacant: 1 },
-};
-
-const recentActivity = [
-  {
-    type: "member",
-    action: "New member registered",
-    name: "John Doe",
-    time: "2 hours ago",
-  },
-  {
-    type: "band",
-    action: "Band meeting scheduled",
-    name: "Youth Band",
-    time: "4 hours ago",
-  },
-  {
-    type: "child",
-    action: "Child dedication request",
-    name: "Baby Sarah",
-    time: "1 day ago",
-  },
-  {
-    type: "department",
-    action: "Department head assigned",
-    name: "Media Department",
-    time: "2 days ago",
-  },
-];
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAllBands } from "@/hooks/useBands";
+import { useChildren } from "@/hooks/useChildren";
+import { useMembers } from "@/hooks/useMembers";
+import { DepartmentKeysEnum } from "@/enums";
 
 const DirectoryCard = ({
   title,
@@ -178,8 +146,109 @@ const StatsCard = ({
 );
 
 const DirectoryPage = () => {
-  const totalMembers =
-    directoryStats.members.total + directoryStats.children.total;
+  const { data: members, isLoading: membersLoading } = useMembers();
+  const { data: bands, isLoading: bandsLoading } = useAllBands();
+  const { data: children, isLoading: childrenLoading } = useChildren();
+
+  const isLoading = membersLoading || bandsLoading || childrenLoading;
+
+  // Calculate real stats
+  const stats = useMemo(() => {
+    const memberStats = {
+      total: members?.length || 0,
+      active: members?.filter((m) => m.status === "active").length || 0,
+      pending: members?.filter((m) => !m.verified).length || 0,
+      inactive: members?.filter((m) => m.status === "inactive").length || 0,
+    };
+
+    const bandStats = {
+      total: bands?.length || 0,
+      active: bands?.length || 0,
+    };
+
+    const childrenStats = {
+      total: children?.length || 0,
+      active: children?.length || 0,
+      newThisMonth: children?.filter((c) => {
+        const createdAt = new Date(c.createdAt);
+        const now = new Date();
+        return (
+          createdAt.getMonth() === now.getMonth() &&
+          createdAt.getFullYear() === now.getFullYear()
+        );
+      }).length || 0,
+    };
+
+    // Get unique departments from members
+    const allDepartments = new Set<string>();
+    members?.forEach((m) => {
+      m.departmentKeys?.forEach((d: string) => allDepartments.add(d));
+    });
+
+    const departmentStats = {
+      total: Object.keys(DepartmentKeysEnum).length,
+      active: allDepartments.size,
+      vacant: Object.keys(DepartmentKeysEnum).length - allDepartments.size,
+    };
+
+    return { memberStats, bandStats, childrenStats, departmentStats };
+  }, [members, bands, children]);
+
+  // Get recent activity from members
+  const recentActivity = useMemo(() => {
+    if (!members) return [];
+
+    const sortedMembers = [...members]
+      .filter((m) => m.createdAt)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 4);
+
+    return sortedMembers.map((member) => ({
+      type: "member",
+      action: "Member registered",
+      name: `${member.firstName} ${member.lastName}`,
+      time: formatDistanceToNow(new Date(member.createdAt), { addSuffix: true }),
+    }));
+  }, [members]);
+
+  // Calculate weekly stats
+  const weeklyStats = useMemo(() => {
+    const now = new Date();
+    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const newMembersThisWeek = members?.filter((m) => {
+      const createdAt = new Date(m.createdAt);
+      return createdAt >= oneWeekAgo;
+    }).length || 0;
+
+    const newChildrenThisWeek = children?.filter((c) => {
+      const createdAt = new Date(c.createdAt);
+      return createdAt >= oneWeekAgo;
+    }).length || 0;
+
+    return { newMembersThisWeek, newChildrenThisWeek };
+  }, [members, children]);
+
+  const totalMembers = stats.memberStats.total + stats.childrenStats.total;
+
+  if (isLoading) {
+    return (
+      <div className="space-y-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div>
+            <Skeleton className="h-10 w-64" />
+            <Skeleton className="h-4 w-96 mt-2" />
+          </div>
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-32" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -193,10 +262,12 @@ const DirectoryPage = () => {
             Comprehensive management hub for all church directory sections
           </p>
         </div>
-        <Button className="text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600">
-          <Plus className="h-4 w-4 mr-2" />
-          Quick Add
-        </Button>
+        <Link href="/directory/members/create">
+          <Button className="text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Member
+          </Button>
+        </Link>
       </div>
 
       {/* Quick Stats */}
@@ -204,28 +275,28 @@ const DirectoryPage = () => {
         <StatsCard
           title="Total People"
           value={totalMembers}
-          change="+12% this month"
+          change={`${stats.memberStats.total} members, ${stats.childrenStats.total} children`}
           icon={Users}
           color="text-blue-600 dark:text-blue-400"
         />
         <StatsCard
           title="Active Members"
-          value={directoryStats.members.active}
-          change="+8% this month"
+          value={stats.memberStats.active}
+          change={`${stats.memberStats.inactive} inactive`}
           icon={UserCheck}
           color="text-green-600 dark:text-green-400"
         />
         <StatsCard
           title="New This Week"
-          value={directoryStats.members.pending}
-          change="+3 this week"
+          value={weeklyStats.newMembersThisWeek}
+          change={`${weeklyStats.newChildrenThisWeek} children registered`}
           icon={TrendingUp}
           color="text-blue-600 dark:text-blue-400"
         />
         <StatsCard
           title="Departments"
-          value={directoryStats.departments.active}
-          change="1 vacant position"
+          value={stats.departmentStats.active}
+          change={`${stats.departmentStats.vacant} vacant`}
           icon={Building2}
           color="text-green-600 dark:text-green-400"
         />
@@ -244,10 +315,10 @@ const DirectoryPage = () => {
             href="/directory/members"
             color="blue"
             stats={[
-              { label: "Total", value: directoryStats.members.total },
-              { label: "Active", value: directoryStats.members.active },
-              { label: "Pending", value: directoryStats.members.pending },
-              { label: "Inactive", value: directoryStats.members.inactive },
+              { label: "Total", value: stats.memberStats.total },
+              { label: "Active", value: stats.memberStats.active },
+              { label: "Pending", value: stats.memberStats.pending },
+              { label: "Inactive", value: stats.memberStats.inactive },
             ]}
           />
 
@@ -258,10 +329,10 @@ const DirectoryPage = () => {
             href="/directory/bands"
             color="purple"
             stats={[
-              { label: "Total", value: directoryStats.bands.total },
-              { label: "Active", value: directoryStats.bands.active },
-              { label: "Upcoming", value: directoryStats.bands.upcoming },
-              { label: "Events", value: 15 },
+              { label: "Total", value: stats.bandStats.total },
+              { label: "Active", value: stats.bandStats.active },
+              { label: "Members", value: stats.memberStats.total },
+              { label: "Groups", value: stats.bandStats.total },
             ]}
           />
 
@@ -272,10 +343,10 @@ const DirectoryPage = () => {
             href="/directory/children"
             color="green"
             stats={[
-              { label: "Total", value: directoryStats.children.total },
-              { label: "Active", value: directoryStats.children.active },
-              { label: "Newborns", value: directoryStats.children.newborns },
-              { label: "Programs", value: 5 },
+              { label: "Total", value: stats.childrenStats.total },
+              { label: "Active", value: stats.childrenStats.active },
+              { label: "This Month", value: stats.childrenStats.newThisMonth },
+              { label: "Programs", value: 2 },
             ]}
           />
 
@@ -286,10 +357,10 @@ const DirectoryPage = () => {
             href="/directory/departments"
             color="orange"
             stats={[
-              { label: "Total", value: directoryStats.departments.total },
-              { label: "Active", value: directoryStats.departments.active },
-              { label: "Vacant", value: directoryStats.departments.vacant },
-              { label: "Leaders", value: 23 },
+              { label: "Total", value: stats.departmentStats.total },
+              { label: "Active", value: stats.departmentStats.active },
+              { label: "Vacant", value: stats.departmentStats.vacant },
+              { label: "Members", value: stats.memberStats.total },
             ]}
           />
         </div>
@@ -307,35 +378,41 @@ const DirectoryPage = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentActivity.map((activity, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50"
-                  >
+                {recentActivity.length === 0 ? (
+                  <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+                    No recent activity
+                  </p>
+                ) : (
+                  recentActivity.map((activity, index) => (
                     <div
-                      className={`w-2 h-2 rounded-full mt-2 ${
-                        activity.type === "member"
-                          ? "bg-blue-500"
-                          : activity.type === "band"
-                            ? "bg-purple-500"
-                            : activity.type === "child"
-                              ? "bg-green-500"
-                              : "bg-orange-500"
-                      }`}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {activity.action}
-                      </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {activity.name}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-500">
-                        {activity.time}
-                      </p>
+                      key={index}
+                      className="flex items-start space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50"
+                    >
+                      <div
+                        className={`w-2 h-2 rounded-full mt-2 ${
+                          activity.type === "member"
+                            ? "bg-blue-500"
+                            : activity.type === "band"
+                              ? "bg-purple-500"
+                              : activity.type === "child"
+                                ? "bg-green-500"
+                                : "bg-orange-500"
+                        }`}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {activity.action}
+                        </p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {activity.name}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-500">
+                          {activity.time}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>
@@ -355,15 +432,15 @@ const DirectoryPage = () => {
                   New Members
                 </div>
                 <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                  12
+                  {weeklyStats.newMembersThisWeek}
                 </div>
               </div>
               <div className="p-3 bg-purple-50 dark:bg-purple-950 rounded-lg">
                 <div className="text-sm font-medium text-purple-900 dark:text-purple-100">
-                  Band Rehearsals
+                  Total Bands
                 </div>
                 <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                  6
+                  {stats.bandStats.total}
                 </div>
               </div>
               <div className="p-3 bg-green-50 dark:bg-green-950 rounded-lg">
@@ -371,7 +448,7 @@ const DirectoryPage = () => {
                   Child Registrations
                 </div>
                 <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                  8
+                  {weeklyStats.newChildrenThisWeek}
                 </div>
               </div>
             </CardContent>

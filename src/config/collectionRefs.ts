@@ -31,3 +31,7 @@ export function getNotificationRef(): CollectionReference {
 export function getAnnouncementsRef(): CollectionReference {
   return collection(getFirebaseDb(), "announcements");
 }
+
+export function getPrayersRef(): CollectionReference {
+  return collection(getFirebaseDb(), "prayers");
+}

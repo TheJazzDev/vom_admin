@@ -94,6 +94,10 @@ const data = {
       icon: Bot,
       items: [
         {
+          title: "Daily Prayers",
+          url: "/ministry/prayers",
+        },
+        {
           title: "Bible Study",
           url: "/ministry/bible-study",
         },
