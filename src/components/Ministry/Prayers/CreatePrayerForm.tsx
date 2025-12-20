@@ -1,10 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { format } from "date-fns";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -66,8 +66,7 @@ export function CreatePrayerForm({
     },
   });
 
-  const isSubmitting =
-    createMutation.isPending || updateMutation.isPending;
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   async function onSubmit(data: DailyPrayerFormData) {
     try {
@@ -83,14 +82,18 @@ export function CreatePrayerForm({
       }
       router.push("/ministry/prayers");
     } catch (_error) {
-      toast.error(isEditing ? "Failed to update prayer" : "Failed to create prayer");
+      toast.error(
+        isEditing ? "Failed to update prayer" : "Failed to create prayer",
+      );
     }
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{isEditing ? "Edit Prayer" : "Create Daily Prayer"}</CardTitle>
+        <CardTitle>
+          {isEditing ? "Edit Prayer" : "Create Daily Prayer"}
+        </CardTitle>
         <CardDescription>
           {isEditing
             ? "Update the daily prayer details"
@@ -142,7 +145,9 @@ export function CreatePrayerForm({
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        selected={field.value ? new Date(field.value) : undefined}
+                        selected={
+                          field.value ? new Date(field.value) : undefined
+                        }
                         onSelect={(date) =>
                           field.onChange(date ? format(date, "yyyy-MM-dd") : "")
                         }

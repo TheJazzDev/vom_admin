@@ -23,10 +23,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DepartmentKeysEnum } from "@/enums";
 import { useAllBands } from "@/hooks/useBands";
 import { useChildren } from "@/hooks/useChildren";
 import { useMembers } from "@/hooks/useMembers";
-import { DepartmentKeysEnum } from "@/enums";
 
 const DirectoryCard = ({
   title,
@@ -169,20 +169,23 @@ const DirectoryPage = () => {
     const childrenStats = {
       total: children?.length || 0,
       active: children?.length || 0,
-      newThisMonth: children?.filter((c) => {
-        const createdAt = new Date(c.createdAt);
-        const now = new Date();
-        return (
-          createdAt.getMonth() === now.getMonth() &&
-          createdAt.getFullYear() === now.getFullYear()
-        );
-      }).length || 0,
+      newThisMonth:
+        children?.filter((c) => {
+          const createdAt = new Date(c.createdAt);
+          const now = new Date();
+          return (
+            createdAt.getMonth() === now.getMonth() &&
+            createdAt.getFullYear() === now.getFullYear()
+          );
+        }).length || 0,
     };
 
     // Get unique departments from members
     const allDepartments = new Set<string>();
     members?.forEach((m) => {
-      m.departmentKeys?.forEach((d: string) => allDepartments.add(d));
+      m.departmentKeys?.forEach((d: string) => {
+        allDepartments.add(d);
+      });
     });
 
     const departmentStats = {
@@ -200,14 +203,19 @@ const DirectoryPage = () => {
 
     const sortedMembers = [...members]
       .filter((m) => m.createdAt)
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      )
       .slice(0, 4);
 
     return sortedMembers.map((member) => ({
       type: "member",
       action: "Member registered",
       name: `${member.firstName} ${member.lastName}`,
-      time: formatDistanceToNow(new Date(member.createdAt), { addSuffix: true }),
+      time: formatDistanceToNow(new Date(member.createdAt), {
+        addSuffix: true,
+      }),
     }));
   }, [members]);
 
@@ -216,15 +224,17 @@ const DirectoryPage = () => {
     const now = new Date();
     const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-    const newMembersThisWeek = members?.filter((m) => {
-      const createdAt = new Date(m.createdAt);
-      return createdAt >= oneWeekAgo;
-    }).length || 0;
+    const newMembersThisWeek =
+      members?.filter((m) => {
+        const createdAt = new Date(m.createdAt);
+        return createdAt >= oneWeekAgo;
+      }).length || 0;
 
-    const newChildrenThisWeek = children?.filter((c) => {
-      const createdAt = new Date(c.createdAt);
-      return createdAt >= oneWeekAgo;
-    }).length || 0;
+    const newChildrenThisWeek =
+      children?.filter((c) => {
+        const createdAt = new Date(c.createdAt);
+        return createdAt >= oneWeekAgo;
+      }).length || 0;
 
     return { newMembersThisWeek, newChildrenThisWeek };
   }, [members, children]);

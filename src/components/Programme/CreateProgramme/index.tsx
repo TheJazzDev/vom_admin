@@ -20,7 +20,8 @@ const programmeTypes = [
     title: "Sunday Service",
     description: "Create a programme for regular Sunday worship service",
     icon: Sun,
-    color: "bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800 hover:bg-yellow-100 dark:hover:bg-yellow-900",
+    color:
+      "bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800 hover:bg-yellow-100 dark:hover:bg-yellow-900",
     iconColor: "text-yellow-600 dark:text-yellow-400",
   },
   {
@@ -28,7 +29,8 @@ const programmeTypes = [
     title: "Shiloh Service",
     description: "Create a programme for Shiloh revival service",
     icon: BookOpen,
-    color: "bg-purple-50 dark:bg-purple-950 border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900",
+    color:
+      "bg-purple-50 dark:bg-purple-950 border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900",
     iconColor: "text-purple-600 dark:text-purple-400",
   },
   {
@@ -36,7 +38,8 @@ const programmeTypes = [
     title: "Vigil Service",
     description: "Create a programme for night vigil service",
     icon: Moon,
-    color: "bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900",
+    color:
+      "bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900",
     iconColor: "text-blue-600 dark:text-blue-400",
   },
 ];
@@ -67,8 +70,12 @@ const ProgrammeTypeSelector = () => {
                   <CardTitle className="text-xl font-bold text-gray-900 dark:text-gray-100">
                     {programme.title}
                   </CardTitle>
-                  <div className={`p-3 rounded-full bg-white dark:bg-gray-800 shadow-sm`}>
-                    <programme.icon className={`h-6 w-6 ${programme.iconColor}`} />
+                  <div
+                    className={`p-3 rounded-full bg-white dark:bg-gray-800 shadow-sm`}
+                  >
+                    <programme.icon
+                      className={`h-6 w-6 ${programme.iconColor}`}
+                    />
                   </div>
                 </div>
                 <CardDescription className="text-gray-600 dark:text-gray-400">

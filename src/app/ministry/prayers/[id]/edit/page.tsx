@@ -2,8 +2,8 @@
 
 import { useParams } from "next/navigation";
 import { CreatePrayerForm } from "@/components/Ministry/Prayers";
-import { usePrayerById } from "@/hooks/usePrayers";
 import { Skeleton } from "@/components/ui/skeleton";
+import { usePrayerById } from "@/hooks/usePrayers";
 
 export default function EditPrayerPage() {
   const params = useParams();

@@ -1,16 +1,16 @@
 import {
-  type DocumentData,
-  type QueryDocumentSnapshot,
   addDoc,
+  type DocumentData,
   deleteDoc,
   doc,
   getDoc,
   getDocs,
+  limit,
   orderBy,
+  type QueryDocumentSnapshot,
   query,
   updateDoc,
   where,
-  limit,
 } from "firebase/firestore";
 import { getPrayersRef } from "@/config/collectionRefs";
 import { getFirebaseDb } from "@/config/firebase";

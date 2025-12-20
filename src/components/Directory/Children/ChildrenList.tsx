@@ -1,6 +1,6 @@
 "use client";
 
-import { format, differenceInYears, differenceInMonths } from "date-fns";
+import { differenceInMonths, differenceInYears, format } from "date-fns";
 import { Baby, Calendar, Phone, Search, User } from "lucide-react";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -75,7 +75,9 @@ export function ChildrenList() {
     return (
       <Card className="border-red-200 bg-red-50">
         <CardContent className="p-6">
-          <p className="text-red-600">Failed to load children. Please try again.</p>
+          <p className="text-red-600">
+            Failed to load children. Please try again.
+          </p>
         </CardContent>
       </Card>
     );
@@ -137,7 +139,9 @@ export function ChildrenList() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Children</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Children
+            </CardTitle>
             <Baby className="h-4 w-4 text-gray-500" />
           </CardHeader>
           <CardContent>
@@ -214,7 +218,9 @@ export function ChildrenList() {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      variant={child.gender === "male" ? "default" : "secondary"}
+                      variant={
+                        child.gender === "male" ? "default" : "secondary"
+                      }
                       className={
                         child.gender === "male"
                           ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"

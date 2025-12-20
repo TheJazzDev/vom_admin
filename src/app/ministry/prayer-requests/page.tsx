@@ -1,4 +1,4 @@
-import { Hand, CheckCircle, Clock, Plus, Users } from "lucide-react";
+import { CheckCircle, Clock, Hand, Plus, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 export const metadata = {
   title: "VOM - Prayer Requests",
@@ -34,7 +33,9 @@ export default function PrayerRequestsPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Requests</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Requests
+            </CardTitle>
             <Hand className="h-4 w-4 text-gray-500" />
           </CardHeader>
           <CardContent>
@@ -67,7 +68,9 @@ export default function PrayerRequestsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Prayer Warriors</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Prayer Warriors
+            </CardTitle>
             <Users className="h-4 w-4 text-gray-500" />
           </CardHeader>
           <CardContent>

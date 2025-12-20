@@ -1,13 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  getAllPrayers,
-  getActivePrayers,
-  getTodaysPrayer,
-  getPrayerById,
   createPrayer,
-  updatePrayer,
   deletePrayer,
+  getActivePrayers,
+  getAllPrayers,
+  getPrayerById,
   getPrayerStats,
+  getTodaysPrayer,
+  updatePrayer,
 } from "@/services/prayerService";
 
 // Query keys
@@ -79,8 +79,13 @@ export const useUpdatePrayer = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, updates }: { id: string; updates: Partial<DailyPrayer> }) =>
-      updatePrayer(id, updates),
+    mutationFn: ({
+      id,
+      updates,
+    }: {
+      id: string;
+      updates: Partial<DailyPrayer>;
+    }) => updatePrayer(id, updates),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: prayerKeys.all });
       queryClient.invalidateQueries({ queryKey: prayerKeys.detail(id) });

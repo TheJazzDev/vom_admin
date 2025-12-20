@@ -1,4 +1,4 @@
-import { Mic, Calendar, Play, Plus, Clock } from "lucide-react";
+import { Calendar, Clock, Mic, Play, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -55,7 +55,9 @@ export default function RecentSermonsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Duration</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Duration
+            </CardTitle>
             <Clock className="h-4 w-4 text-gray-500" />
           </CardHeader>
           <CardContent>
@@ -68,9 +70,7 @@ export default function RecentSermonsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Sermon Archive</CardTitle>
-          <CardDescription>
-            Browse and manage recorded sermons
-          </CardDescription>
+          <CardDescription>Browse and manage recorded sermons</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center p-12 text-center">

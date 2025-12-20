@@ -1,7 +1,15 @@
 "use client";
 
 import { format } from "date-fns";
-import { Book, Calendar, Edit, MoreVertical, Plus, Trash2, User } from "lucide-react";
+import {
+  Book,
+  Calendar,
+  Edit,
+  MoreVertical,
+  Plus,
+  Trash2,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -22,7 +30,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import { usePrayers, useDeletePrayer, useUpdatePrayer } from "@/hooks/usePrayers";
+import {
+  useDeletePrayer,
+  usePrayers,
+  useUpdatePrayer,
+} from "@/hooks/usePrayers";
 
 export function PrayersList() {
   const { data: prayers, isLoading, error } = usePrayers();
@@ -80,7 +92,9 @@ export function PrayersList() {
     return (
       <Card className="border-red-200 bg-red-50">
         <CardContent className="p-6">
-          <p className="text-red-600">Failed to load prayers. Please try again.</p>
+          <p className="text-red-600">
+            Failed to load prayers. Please try again.
+          </p>
         </CardContent>
       </Card>
     );
@@ -168,7 +182,9 @@ export function PrayersList() {
                         Edit
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleToggleActive(prayer)}>
+                    <DropdownMenuItem
+                      onClick={() => handleToggleActive(prayer)}
+                    >
                       {prayer.isActive ? "Deactivate" : "Activate"}
                     </DropdownMenuItem>
                     <DropdownMenuItem

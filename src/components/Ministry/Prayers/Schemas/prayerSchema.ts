@@ -9,9 +9,7 @@ export const dailyPrayerSchema = z.object({
     .string()
     .min(10, "Prayer content must be at least 10 characters")
     .max(2000, "Prayer content must be less than 2000 characters"),
-  scriptureReference: z
-    .string()
-    .min(1, "Scripture reference is required"),
+  scriptureReference: z.string().min(1, "Scripture reference is required"),
   scriptureText: z.string().optional(),
   date: z.string().min(1, "Date is required"),
   author: z.string().min(1, "Author is required"),

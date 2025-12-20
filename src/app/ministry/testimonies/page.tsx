@@ -1,4 +1,4 @@
-import { Heart, Star, Calendar, Plus, Users } from "lucide-react";
+import { Calendar, Heart, Plus, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -33,7 +33,9 @@ export default function TestimoniesPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Testimonies</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Testimonies
+            </CardTitle>
             <Heart className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>

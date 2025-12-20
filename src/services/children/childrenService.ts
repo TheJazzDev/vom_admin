@@ -1,8 +1,8 @@
 import {
   type DocumentData,
-  type QueryDocumentSnapshot,
   getDocs,
   orderBy,
+  type QueryDocumentSnapshot,
   query,
 } from "firebase/firestore";
 import { getChildrenRef } from "@/config/collectionRefs";
