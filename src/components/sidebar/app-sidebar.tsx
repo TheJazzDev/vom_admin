@@ -86,6 +86,10 @@ const data = {
           title: "Children",
           url: "/directory/children",
         },
+        {
+          title: "First Timers",
+          url: "/first-timers",
+        },
       ],
     },
     {

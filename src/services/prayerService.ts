@@ -1,5 +1,6 @@
 import {
   addDoc,
+  collection,
   type DocumentData,
   deleteDoc,
   doc,
@@ -92,7 +93,7 @@ export const getPrayerById = async (
 ): Promise<DailyPrayer | null> => {
   try {
     const db = getFirebaseDb();
-    const docRef = doc(db, "prayers", id);
+    const docRef = doc(db, "dailyPrayers", id);
     const docSnap = await getDoc(docRef);
 
     if (!docSnap.exists()) {
@@ -117,6 +118,8 @@ export const createPrayer = async (
 
     const newPrayer: Omit<DailyPrayer, "id"> = {
       ...prayerData,
+      likesCount: 0,
+      commentsCount: 0,
       isActive: true,
       createdAt: new Date().toISOString(),
     };
@@ -135,7 +138,7 @@ export const updatePrayer = async (
 ): Promise<void> => {
   try {
     const db = getFirebaseDb();
-    const docRef = doc(db, "prayers", id);
+    const docRef = doc(db, "dailyPrayers", id);
 
     await updateDoc(docRef, {
       ...updates,
@@ -150,7 +153,7 @@ export const updatePrayer = async (
 export const deletePrayer = async (id: string): Promise<void> => {
   try {
     const db = getFirebaseDb();
-    const docRef = doc(db, "prayers", id);
+    const docRef = doc(db, "dailyPrayers", id);
     await deleteDoc(docRef);
   } catch (error) {
     console.error("Error deleting prayer:", error);
@@ -178,5 +181,51 @@ export const getPrayerStats = async (): Promise<{
   } catch (error) {
     console.error("Error getting prayer stats:", error);
     return { total: 0, active: 0, thisMonth: 0 };
+  }
+};
+
+// Comment Management Functions
+export const getPrayerComments = async (
+  prayerId: string,
+): Promise<DailyPrayerComment[]> => {
+  try {
+    const db = getFirebaseDb();
+    const commentsRef = collection(db, `dailyPrayers/${prayerId}/comments`);
+    const q = query(commentsRef, orderBy("createdAt", "desc"));
+    const querySnapshot = await getDocs(q);
+
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...(doc.data() as Omit<DailyPrayerComment, "id">),
+    }));
+  } catch (error) {
+    console.error("Error fetching prayer comments:", error);
+    throw new Error("Failed to fetch prayer comments");
+  }
+};
+
+export const deletePrayerComment = async (
+  prayerId: string,
+  commentId: string,
+): Promise<void> => {
+  try {
+    const db = getFirebaseDb();
+    const commentRef = doc(
+      db,
+      `dailyPrayers/${prayerId}/comments/${commentId}`,
+    );
+    const prayerRef = doc(db, "dailyPrayers", prayerId);
+
+    await deleteDoc(commentRef);
+    // Decrement comment count
+    await updateDoc(prayerRef, {
+      commentsCount:
+        (await getDoc(prayerRef)).data()?.commentsCount > 0
+          ? (await getDoc(prayerRef)).data()?.commentsCount - 1
+          : 0,
+    });
+  } catch (error) {
+    console.error("Error deleting prayer comment:", error);
+    throw new Error("Failed to delete prayer comment");
   }
 };

@@ -33,5 +33,29 @@ export function getAnnouncementsRef(): CollectionReference {
 }
 
 export function getPrayersRef(): CollectionReference {
-  return collection(getFirebaseDb(), "prayers");
+  return collection(getFirebaseDb(), "dailyPrayers");
+}
+
+export function getFirstTimersRef(): CollectionReference {
+  return collection(getFirebaseDb(), "firstTimers");
+}
+
+export function getBibleStudyRef(): CollectionReference {
+  return collection(getFirebaseDb(), "bibleStudy");
+}
+
+export function getBibleStudyTopicsRef(): CollectionReference {
+  return collection(getFirebaseDb(), "bibleStudyTopics");
+}
+
+export function getSermonsRef(): CollectionReference {
+  return collection(getFirebaseDb(), "sermons");
+}
+
+export function getSermonSeriesRef(): CollectionReference {
+  return collection(getFirebaseDb(), "sermonSeries");
+}
+
+export function getTestimoniesRef(): CollectionReference {
+  return collection(getFirebaseDb(), "testimonies");
 }

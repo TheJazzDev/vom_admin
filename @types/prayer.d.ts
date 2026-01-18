@@ -3,13 +3,23 @@ interface DailyPrayer {
   title: string;
   content: string;
   scriptureReference: string;
-  scriptureText?: string;
+  scriptureText: string;
   date: string;
-  author: string;
-  authorId?: string;
+  authorId: string;
+  authorName: string;
+  likesCount: number;
+  commentsCount: number;
   isActive: boolean;
   createdAt: string;
-  updatedAt?: string;
+}
+
+interface DailyPrayerComment {
+  id: string;
+  userId: string;
+  userName: string;
+  userAvatar: string | null;
+  content: string;
+  createdAt: string;
 }
 
 interface PrayerRequest {
@@ -43,10 +53,10 @@ interface CreateDailyPrayerData {
   title: string;
   content: string;
   scriptureReference: string;
-  scriptureText?: string;
+  scriptureText: string;
   date: string;
-  author: string;
-  authorId?: string;
+  authorId: string;
+  authorName: string;
 }
 
 interface CreatePrayerRequestData {

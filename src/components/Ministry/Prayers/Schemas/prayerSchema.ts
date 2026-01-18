@@ -10,10 +10,10 @@ export const dailyPrayerSchema = z.object({
     .min(10, "Prayer content must be at least 10 characters")
     .max(2000, "Prayer content must be less than 2000 characters"),
   scriptureReference: z.string().min(1, "Scripture reference is required"),
-  scriptureText: z.string().optional(),
+  scriptureText: z.string().min(1, "Scripture text is required"),
   date: z.string().min(1, "Date is required"),
-  author: z.string().min(1, "Author is required"),
-  authorId: z.string().optional(),
+  authorName: z.string().min(1, "Author name is required"),
+  authorId: z.string().min(1, "Author ID is required"),
 });
 
 export type DailyPrayerFormData = z.infer<typeof dailyPrayerSchema>;

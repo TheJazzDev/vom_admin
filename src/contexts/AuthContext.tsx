@@ -34,11 +34,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data.success && data.user) {
         setUser(data.user);
       } else {
+        // Session is invalid or expired
         setUser(null);
+
+        // Clear the session cookie on client side
+        document.cookie =
+          "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
+        // Redirect to login if we're not already there
+        if (
+          typeof window !== "undefined" &&
+          window.location.pathname !== "/login"
+        ) {
+          window.location.href = "/login";
+        }
       }
     } catch (error) {
       console.error("Error checking session:", error);
       setUser(null);
+
+      // Clear the session cookie on client side
+      document.cookie =
+        "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
+      // Redirect to login on error if we're not already there
+      if (
+        typeof window !== "undefined" &&
+        window.location.pathname !== "/login"
+      ) {
+        window.location.href = "/login";
+      }
     } finally {
       setLoading(false);
     }

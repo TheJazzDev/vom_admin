@@ -61,7 +61,7 @@ export function CreatePrayerForm({
       scriptureReference: initialData?.scriptureReference || "",
       scriptureText: initialData?.scriptureText || "",
       date: initialData?.date || format(new Date(), "yyyy-MM-dd"),
-      author: initialData?.author || "",
+      authorName: initialData?.authorName || "",
       authorId: initialData?.authorId || "",
     },
   });
@@ -182,7 +182,7 @@ export function CreatePrayerForm({
               name="scriptureText"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Scripture Text (Optional)</FormLabel>
+                  <FormLabel>Scripture Text</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Enter the scripture text..."
@@ -218,13 +218,30 @@ export function CreatePrayerForm({
 
             <FormField
               control={form.control}
-              name="author"
+              name="authorName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Author</FormLabel>
+                  <FormLabel>Author Name</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter author name" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="authorId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Author ID</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter author ID (user ID)" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    The user ID of the author from the members collection
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

@@ -165,7 +165,7 @@ export function PrayersList() {
                     </span>
                     <span className="flex items-center gap-1">
                       <User className="h-3 w-3" />
-                      {prayer.author}
+                      {prayer.authorName}
                     </span>
                   </CardDescription>
                 </div>

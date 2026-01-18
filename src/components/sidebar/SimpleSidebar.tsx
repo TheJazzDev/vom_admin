@@ -76,10 +76,10 @@ export function SimpleSidebar({ navItems }: SimpleSidebarProps) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
 
-  // Check if a URL is active (exact match or starts with for nested routes)
+  // Check if a URL is active (exact match only for sub-items to prevent false highlights)
   const isActiveLink = (url: string) => {
     if (url === "/") return pathname === "/";
-    return pathname === url || pathname.startsWith(`${url}/`);
+    return pathname === url;
   };
 
   // Check if a section has any active child
@@ -160,7 +160,7 @@ export function SimpleSidebar({ navItems }: SimpleSidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 h-screen bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 ease-in-out",
+          "fixed left-0 top-0 z-40 h-screen bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 ease-in-out flex flex-col",
           // Mobile: hidden by default, slides in from left when open
           isMobileOpen ? "translate-x-0" : "-translate-x-full",
           "w-64 md:translate-x-0",
