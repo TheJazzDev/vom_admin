@@ -6,17 +6,19 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { BookOpen, Bot, Settings2, SquareTerminal } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { ThemeProvider } from "next-themes";
 import type * as React from "react";
 import { Toaster } from "sonner";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { OfflineIndicator } from "@/components/OfflineIndicator";
 import {
   SimpleSidebar,
   SimpleSidebarProvider,
   useSidebarContext,
 } from "@/components/sidebar/SimpleSidebar";
 import { SiteHeader } from "@/components/sidebar/site-header";
+import { navigation } from "@/config/navigation";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
@@ -31,105 +33,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
-const navItems = [
-  {
-    title: "Programmes",
-    url: "/programmes",
-    icon: BookOpen,
-    items: [
-      {
-        title: "Overview",
-        url: "/programmes",
-      },
-      {
-        title: "Create new",
-        url: "/programmes/create",
-      },
-      {
-        title: "Upcoming",
-        url: "/programmes/upcoming",
-      },
-      {
-        title: "Past",
-        url: "/programmes/past",
-      },
-      {
-        title: "Drafts",
-        url: "/programmes/drafts",
-      },
-    ],
-  },
-  {
-    title: "Directory",
-    url: "/directory",
-    icon: SquareTerminal,
-    items: [
-      {
-        title: "Overview",
-        url: "/directory",
-      },
-      {
-        title: "Members",
-        url: "/directory/members",
-      },
-      {
-        title: "Bands",
-        url: "/directory/bands",
-      },
-      {
-        title: "Children",
-        url: "/directory/children",
-      },
-    ],
-  },
-  {
-    title: "Ministry",
-    url: "/ministry",
-    icon: Bot,
-    items: [
-      {
-        title: "Bible Study",
-        url: "/ministry/bible-study",
-      },
-      {
-        title: "Recent Sermons",
-        url: "/ministry/recent-sermons",
-      },
-      {
-        title: "Prayer Requests",
-        url: "/ministry/prayer-requests",
-      },
-      {
-        title: "Testimonies",
-        url: "/ministry/testimonies",
-      },
-    ],
-  },
-  {
-    title: "Information",
-    url: "/information",
-    icon: Settings2,
-    items: [
-      {
-        title: "Announcements",
-        url: "/information/announcements",
-      },
-      {
-        title: "Events",
-        url: "/information/events",
-      },
-      {
-        title: "Weekly Activities",
-        url: "/information/weekly-activities",
-      },
-      {
-        title: "Monthly Activities",
-        url: "/information/monthly-activities",
-      },
-    ],
-  },
-];
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
   const { isCollapsed } = useSidebarContext();
@@ -175,7 +78,7 @@ function LayoutWrapper({ children }: { children: React.ReactNode }) {
 
   return (
     <SimpleSidebarProvider>
-      <SimpleSidebar navItems={navItems} />
+      <SimpleSidebar navItems={navigation} />
       <LayoutContent>{children}</LayoutContent>
     </SimpleSidebarProvider>
   );
@@ -183,19 +86,22 @@ function LayoutWrapper({ children }: { children: React.ReactNode }) {
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <AuthProvider>
-          <LayoutWrapper>{children}</LayoutWrapper>
-          {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}
-          <Toaster position="top-right" richColors />
-        </AuthProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <OfflineIndicator />
+            <LayoutWrapper>{children}</LayoutWrapper>
+            {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}
+            <Toaster position="top-right" richColors />
+          </AuthProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }

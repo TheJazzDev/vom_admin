@@ -52,6 +52,13 @@ export async function createAnnouncement(
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
+
+    // TODO: Send notification via API route after announcement is created
+    // Notifications are now handled server-side in API routes to avoid client-side Firebase Admin SDK usage
+    // if (input.isActive) {
+    //   // Call POST /api/announcements/[id]/notify endpoint
+    // }
+
     return docRef.id;
   } catch (error) {
     console.error("Error creating announcement:", error);

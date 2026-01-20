@@ -17,6 +17,9 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   isAdmin: boolean;
+  viewingAsRole: string | null;
+  setViewingAsRole: (role: string | null) => void;
+  effectiveRole: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,6 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [viewingAsRole, setViewingAsRole] = useState<string | null>(null);
 
   const checkSession = useCallback(async () => {
     try {
@@ -38,6 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(null);
 
         // Clear the session cookie on client side
+        // biome-ignore lint/suspicious/noDocumentCookie: Need to clear session cookie, Cookie Store API not widely supported
         document.cookie =
           "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
 
@@ -54,6 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
 
       // Clear the session cookie on client side
+      // biome-ignore lint/suspicious/noDocumentCookie: Need to clear session cookie, Cookie Store API not widely supported
       document.cookie =
         "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
 
@@ -173,6 +179,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const isAdmin = user?.role === "admin" || user?.role === "super_admin";
 
+  // Effective role is the viewingAsRole if set (for super_admins), otherwise the actual role
+  const effectiveRole = viewingAsRole || user?.role || null;
+
   return (
     <AuthContext.Provider
       value={{
@@ -182,6 +191,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         logout,
         isAdmin,
+        viewingAsRole,
+        setViewingAsRole,
+        effectiveRole,
       }}
     >
       {children}

@@ -13,7 +13,9 @@ export async function middleware(request: NextRequest) {
     if (
       pathname.startsWith("/api") &&
       !pathname.startsWith("/api/auth") &&
-      pathname !== "/api/init-collections"
+      pathname !== "/api/init-collections" &&
+      pathname !== "/api/notifications/debug" &&
+      pathname !== "/api/notifications/check-receipts"
     ) {
       const session = request.cookies.get("session");
       if (!session) {

@@ -1,6 +1,13 @@
 "use client";
 
-import { BookOpen, Bot, Frame, Settings2, SquareTerminal } from "lucide-react";
+import {
+  BookOpen,
+  Bot,
+  Frame,
+  Settings2,
+  Shield,
+  SquareTerminal,
+} from "lucide-react";
 import type * as React from "react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
@@ -140,6 +147,17 @@ const data = {
         {
           title: "Monthly Activities",
           url: "/information/monthly-activities",
+        },
+      ],
+    },
+    {
+      title: "Admin",
+      url: "#",
+      icon: Shield,
+      items: [
+        {
+          title: "Role Management",
+          url: "/admin/roles",
         },
       ],
     },

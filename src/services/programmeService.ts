@@ -58,6 +58,10 @@ export const saveProgramme = async (
 
   try {
     const docRef = await addDoc(programmesRef, data);
+
+    // TODO: Send notification via API route after programme is created
+    // Notifications are now handled server-side in API routes to avoid client-side Firebase Admin SDK usage
+
     return docRef.id;
   } catch (error) {
     console.error("Error saving programme:", error);
@@ -83,7 +87,15 @@ export const updateProgramme = async (
 
   try {
     const docRef = doc(programmesRef, id);
+
+    // Get current programme data to check status change
+    const currentDoc = await getDoc(docRef);
+    const _currentData = currentDoc.data() as ProgrammeFormData | undefined;
+
     await updateDoc(docRef, dataToUpdate);
+
+    // TODO: Send notifications via API route after programme is updated
+    // Notifications are now handled server-side in API routes to avoid client-side Firebase Admin SDK usage
   } catch (error) {
     console.error("Error updating programme:", error);
     throw new Error("Failed to update programme");

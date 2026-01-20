@@ -11,6 +11,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { ViewAsRoleSelector } from "@/components/ViewAsRoleSelector";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ interface NavItem {
     title: string;
     url: string;
   }[];
+  roles?: string[]; // Allowed roles to view this item. If undefined/empty, all roles can view
 }
 
 interface SimpleSidebarProps {
@@ -139,6 +141,9 @@ export function SimpleSidebar({ navItems }: SimpleSidebarProps) {
     }
     return name.substring(0, 2).toUpperCase();
   };
+
+  // All navigation items are now visible to everyone
+  // Permission checking happens at the page level
 
   return (
     <>
@@ -282,6 +287,9 @@ export function SimpleSidebar({ navItems }: SimpleSidebarProps) {
             </div>
           ))}
         </nav>
+
+        {/* View As Role Selector (Super Admin only) */}
+        {!isCollapsed && <ViewAsRoleSelector />}
 
         {/* User Section at Bottom */}
         <div className="border-t border-gray-200 dark:border-gray-800 p-4">
