@@ -44,8 +44,6 @@ export async function GET(request: NextRequest) {
       .filter((log: any) => log.ticket)
       .map((log: any) => log.ticket);
 
-    console.log(`[CheckReceipts] Checking ${ticketIds.length} ticket IDs`);
-
     if (ticketIds.length === 0) {
       return NextResponse.json({
         success: true,
@@ -56,7 +54,6 @@ export async function GET(request: NextRequest) {
 
     // Check receipts from Expo
     const receipts = await checkNotificationReceipts(ticketIds);
-    console.log("[CheckReceipts] Receipts:", JSON.stringify(receipts, null, 2));
 
     // Parse receipt results
     const receiptDetails = Object.entries(receipts).map(

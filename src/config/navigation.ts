@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Bell, Calendar, Heart, Send, Shield, Users } from "lucide-react";
+import { Bell, Calendar, ClipboardList, Heart, Send, Shield, Users } from "lucide-react";
 import { RoleEnum } from "@/enums";
 
 export interface NavItem {
@@ -37,6 +37,11 @@ export const navigation: NavItem[] = [
       { title: "Children", url: "/directory/children" },
       { title: "First Timers", url: "/first-timers" },
     ],
+  },
+  {
+    title: "Attendance",
+    url: "/attendance",
+    icon: ClipboardList,
   },
   {
     title: "Ministry",

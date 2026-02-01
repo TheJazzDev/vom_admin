@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/card";
 import { useMembers } from "@/hooks/useMembers";
 import { useProgrammes } from "@/hooks/useProgrammes";
+import { BirthdayWidget } from "@/components/Birthday/BirthdayWidget";
 
 const QuickStatCard = ({
   title,
@@ -341,46 +342,52 @@ const MainDashboard = () => {
         />
       </div>
 
-      {/* Quick Links Card */}
-      <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
-            <Settings className="h-5 w-5" />
-            Quick Actions
-          </CardTitle>
-          <CardDescription className="text-gray-600 dark:text-gray-400">
-            Common tasks and shortcuts
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Link href="/directory/members/add-member">
-              <Button variant="outline" className="w-full justify-start">
-                <Users className="h-4 w-4 mr-2" />
-                Add New Member
-              </Button>
-            </Link>
-            <Link href="/programmes/create">
-              <Button variant="outline" className="w-full justify-start">
-                <Calendar className="h-4 w-4 mr-2" />
-                Create Programme
-              </Button>
-            </Link>
-            <Link href="/directory/bands">
-              <Button variant="outline" className="w-full justify-start">
-                <Building2 className="h-4 w-4 mr-2" />
-                View Bands
-              </Button>
-            </Link>
-            <Link href="/directory/members">
-              <Button variant="outline" className="w-full justify-start">
-                <BookOpen className="h-4 w-4 mr-2" />
-                Member Directory
-              </Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Quick Links and Birthday Widget */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Quick Links Card */}
+        <Card className="lg:col-span-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
+              <Settings className="h-5 w-5" />
+              Quick Actions
+            </CardTitle>
+            <CardDescription className="text-gray-600 dark:text-gray-400">
+              Common tasks and shortcuts
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Link href="/directory/members/add-member">
+                <Button variant="outline" className="w-full justify-start">
+                  <Users className="h-4 w-4 mr-2" />
+                  Add New Member
+                </Button>
+              </Link>
+              <Link href="/programmes/create">
+                <Button variant="outline" className="w-full justify-start">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Create Programme
+                </Button>
+              </Link>
+              <Link href="/directory/bands">
+                <Button variant="outline" className="w-full justify-start">
+                  <Building2 className="h-4 w-4 mr-2" />
+                  View Bands
+                </Button>
+              </Link>
+              <Link href="/directory/members">
+                <Button variant="outline" className="w-full justify-start">
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  Member Directory
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Birthday Widget */}
+        <BirthdayWidget maxDisplay={5} showSendButton={true} />
+      </div>
 
       {/* Programme Overview */}
       {programmes && programmes.length > 0 && (

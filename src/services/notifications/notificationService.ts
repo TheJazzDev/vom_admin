@@ -11,14 +11,7 @@ const NOTIFICATION_LOGS_COLLECTION = "notificationLogs";
 export async function getRecipients(
   target: NotificationRecipient,
 ): Promise<UserProfile[]> {
-  console.log("==== GETTING NOTIFICATION RECIPIENTS ====");
-  console.log("[NotificationService] Target type:", target.type);
-
   const allMembers = await getAllMembers();
-  console.log(
-    `[NotificationService] Total members in database: ${allMembers.length}`,
-  );
-
   let recipients: UserProfile[] = [];
 
   switch (target.type) {
@@ -62,44 +55,8 @@ export async function getRecipients(
       recipients = [];
   }
 
-  console.log(
-    `[NotificationService] Recipients after filter: ${recipients.length}`,
-  );
-
-  // Check how many have tokens
-  const withTokens = recipients.filter((m) => m.expoPushToken);
-  const withoutTokens = recipients.filter((m) => !m.expoPushToken);
-
-  console.log(
-    `[NotificationService] Recipients with push tokens: ${withTokens.length}`,
-  );
-  console.log(
-    `[NotificationService] Recipients without push tokens: ${withoutTokens.length}`,
-  );
-
-  if (withTokens.length > 0) {
-    console.log("[NotificationService] Sample recipient with token:", {
-      id: withTokens[0].id,
-      name: `${withTokens[0].firstName} ${withTokens[0].lastName}`,
-      token: `${withTokens[0].expoPushToken?.substring(0, 30)}...`,
-    });
-  }
-
-  if (withoutTokens.length > 0) {
-    console.log(
-      "[NotificationService] Sample recipients without tokens:",
-      withoutTokens.slice(0, 3).map((m) => ({
-        id: m.id,
-        name: `${m.firstName} ${m.lastName}`,
-        hasToken: !!m.expoPushToken,
-      })),
-    );
-  }
-
-  console.log("==== END GETTING RECIPIENTS ====");
-
   // Filter out members without push tokens
-  return withTokens;
+  return recipients.filter((m) => m.expoPushToken);
 }
 
 /**
