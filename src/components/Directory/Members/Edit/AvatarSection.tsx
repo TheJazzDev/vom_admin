@@ -103,7 +103,7 @@ export function AvatarSection({
                       <button
                         type="button"
                         onClick={() => handleRemoveAvatar(field.onChange)}
-                        className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition"
+                        className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition cursor-pointer"
                         disabled={isUploading}
                       >
                         <IconX className="h-4 w-4" />
